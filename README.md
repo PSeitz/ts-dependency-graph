@@ -1,7 +1,6 @@
 [![NPM Downloads](https://img.shields.io/npm/dm/ts_dependency_graph.svg?style=flat)](https://npmjs.org/package/ts_dependency_graph)
 # TS-Dependency-Graph
-Prints a dependency graph in dot format for your typescript project
-
+Prints a dependency graph in dot format for your typescript project. Supported files are .ts and .tsx
 
 ### Usage
 

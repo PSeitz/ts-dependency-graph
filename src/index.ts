@@ -12,6 +12,7 @@ const globProm = promisify(glob);
 const g = new Graph();
 const g_folders = new Graph();
 const checkedFiles = new Set();
+const ignoredFiles = new Set<string>();
 
 const cache: { [index: string]: string[] } = {}
 export function getCachedImportsForFile(file: string) {
@@ -24,6 +25,7 @@ export function getCachedImportsForFile(file: string) {
 const argv = yargs.options({
   start: { type: 'string' },
   aggregate_by_folder: { type: 'boolean', default:false },
+  verbose: { type: 'boolean', default:false },
   basePath: { type: 'string', default: process.cwd() },
 }).argv;
 
@@ -38,6 +40,11 @@ let basePath = argv.basePath;
 
 export async function start_scan(start_file: string) {
   checkFile(start_file)
+
+  if(argv.verbose){
+    console.log("Ignored Files: " + ignoredFiles.size)
+    console.log([...ignoredFiles].join(", "))
+  }
 
   if(argv.aggregate_by_folder){
     console.log(g_folders.to_dot(dirname(relative(basePath, start_file))))
@@ -83,13 +90,13 @@ export function getImportsForFile(file: string) {
   return fileInfo.importedFiles
     .map((importedFile: FileReference) => importedFile.fileName)
     // .filter((fileName: string) => /^json/.test(fileName)) // remove json imports
-    .filter((fileName: string) => {
-      const ext = extname(fileName);
-      if(ext && ext !== ".ts" && ext !== ".tsx"){ // only allow ts and tsx or no extensions
-        return false;
-      }
-      return true;
-    }) // remove json imports
+    // .filter((fileName: string) => {
+    //   const ext = extname(fileName);
+    //   if(ext && ext !== ".ts" && ext !== ".tsx"){ // only allow ts and tsx or no extensions
+    //     return false;
+    //   }
+    //   return true;
+    // })
     // .filter((x: string) => !x.endsWith(".scss"))
     // .filter((x: string) => !x.endsWith(".css"))
     // .filter((x: string) => !x.endsWith(".json")) // ignore json
@@ -115,6 +122,7 @@ export function getImportsForFile(file: string) {
       if (existsSync(yo)) {
         return yo;
       }
+      ignoredFiles.add(fileName)
       return undefined;
       // throw new Error(`Unresolved import ${fileName} in ${file}`);
     })
