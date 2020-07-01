@@ -25,6 +25,7 @@ export function getCachedImportsForFile(file: string) {
 const argv = yargs.options({
   start: { type: 'string' },
   aggregate_by_folder: { type: 'boolean', default:false },
+  max_depth: { type: 'number', default:1000 },
   verbose: { type: 'boolean', default:false },
   basePath: { type: 'string', default: process.cwd() },
 }).argv;
@@ -39,7 +40,7 @@ let start_filo = argv.start;
 let basePath = argv.basePath;
 
 export async function start_scan(start_file: string) {
-  checkFile(start_file)
+  checkFile(start_file, 0)
 
   if(argv.verbose){
     console.log("Ignored Files: " + ignoredFiles.size)
@@ -61,28 +62,51 @@ export async function getSrcFiles(srcRoot: string) {
     .filter(file => !file.endsWith(".d.ts"))
 }
 
-function checkFile(fileName: string) {
+function checkFile(fileName: string, level: number) {
   const imports = getCachedImportsForFile(fileName)
-
+  let info = getInfo(fileName);
   const nextLevel: string[] = [];
   imports.forEach(importFile => {
+    let importFileInfo = getInfo(importFile);
     if(!checkedFiles.has(importFile)){
       checkedFiles.add(importFile);
       nextLevel.push(importFile);
-      g.add_edge({node1: {path: relative(basePath, fileName)}, node2: {path: relative(basePath, importFile)}});
+      g.add_edge({node1: {path: relative(basePath, fileName), layer: info.layer}, node2: {path: relative(basePath, importFile), layer: importFileInfo.layer}});
     }
 
     let folder1 = dirname(relative(basePath, fileName));
     let folder2 = dirname(relative(basePath, importFile));
 
     if(folder1 !== folder2){
-      g_folders.add_edge({node1: {path: folder1 }, node2: {path: folder2}})
+      g_folders.add_edge({node1: {path: folder1, layer: info.layer }, node2: {path: folder2, layer: importFileInfo.layer}})
     }
   });
 
-  for (const file of nextLevel) {
-    checkFile(file);
+  if(level === argv.max_depth){
+    return;
   }
+  for (const file of nextLevel) {
+    checkFile(file, level+1);
+  }
+}
+
+function getInfo(fileName: string): { layer: number; area: string } {
+  const getPath = () => join(parent_dir, "info.json")
+
+  let parent_dir = dirname(fileName);
+  let i = 0;
+  while (!existsSync(getPath())) {
+    parent_dir = join(parent_dir, "../");
+    i++;
+    if (i === 10) { break };
+  }
+
+  if (existsSync(getPath())) {
+    const file = readFileSync(getPath(), "utf8");
+    return JSON.parse(file);
+  }
+
+  return { layer: 1000, area: "universe" }
 }
 
 export function getImportsForFile(file: string) {

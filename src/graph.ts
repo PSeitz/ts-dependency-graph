@@ -3,7 +3,7 @@ export interface IEdge {
     node2: INode;
 }
 export interface INode {
-    // filename: string;
+    layer?: number; // colorize by layer from info.json in same folder {layer: 10}  - {layer: 100}
     path: string;
 }
 
@@ -45,7 +45,11 @@ export class Graph {
 
         const nodes = this.nodes
             .map(n => {
-                const color = n.path === root_table ? ", color=orange" : "";
+                let color = n.path === root_table ? ", color=orange" : "";
+
+                // if(n.path !== root_table && n.layer){
+                //     color = `, color="#${n.layer.toString(16)}0000"`;
+                // }
 
                 const node_labels = [n.path];
 
