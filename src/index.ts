@@ -23,7 +23,7 @@ export function getCachedImportsForFile(file: string) {
 
 const argv = yargs.options({
   start: { type: 'string' },
-  aggregate_by_folder: { type: 'boolean', default:true },
+  aggregate_by_folder: { type: 'boolean', default:false },
   basePath: { type: 'string', default: process.cwd() },
 }).argv;
 
