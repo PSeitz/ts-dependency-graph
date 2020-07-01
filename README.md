@@ -1,0 +1,19 @@
+# ts-dependency-graph
+prints a dependency graph in dot format for your typescript project
+
+
+### Usage
+
+`npx ts-node src/index.ts --help`
+
+
+Usage on self
+```
+npx ts-node src/index.ts --start src/index.ts --aggregate_by_folder false
+```
+
+Create svg, by piping result to dot tool
+
+```
+npx ts-node src/index.ts --start src/index.ts --aggregate_by_folder false  | dot -T svg > dependencygraph.svg
+```

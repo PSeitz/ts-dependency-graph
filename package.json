@@ -1,0 +1,28 @@
+{
+  "name": "ts_dependency_graph",
+  "version": "1.0.2",
+  "description": "prints a dependency graph in dot format for your typescript project",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "prepublish": "tsc",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "glob": "^7.1.6",
+    "typescript": "^3.9.5",
+    "yargs": "^15.3.1"
+  },
+  "devDependencies": {
+    "ts-node": "^8.10.2",
+    "@types/glob": "^7.1.2",
+    "@types/node": "^14.0.14",
+    "@types/yargs": "^15.0.5"
+  },
+  "bin": {
+    "ts_dependency_graph": "./dist/index.js"
+  }
+}
