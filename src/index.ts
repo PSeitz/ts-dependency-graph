@@ -3,7 +3,7 @@ import glob from "glob";
 import ts, { FileReference } from "typescript";
 import { Graph } from "./graph";
 import { readFileSync, existsSync } from "fs";
-import { dirname, join, relative } from "path";
+import { dirname, join, relative, extname } from "path";
 import { promisify } from "util";
 import * as yargs from "yargs";
 
@@ -83,10 +83,17 @@ export function getImportsForFile(file: string) {
   return fileInfo.importedFiles
     .map((importedFile: FileReference) => importedFile.fileName)
     // .filter((fileName: string) => /^json/.test(fileName)) // remove json imports
-    .filter((x: string) => !x.endsWith(".scss"))
-    .filter((x: string) => !x.endsWith(".css"))
-    .filter((x: string) => !x.endsWith(".json")) // ignore json
-    .filter((x: string) => !x.endsWith(".js")) // ignore js
+    .filter((fileName: string) => {
+      const ext = extname(fileName);
+      if(ext && ext !== ".ts" && ext !== ".tsx"){ // only allow ts and tsx or no extensions
+        return false;
+      }
+      return true;
+    }) // remove json imports
+    // .filter((x: string) => !x.endsWith(".scss"))
+    // .filter((x: string) => !x.endsWith(".css"))
+    // .filter((x: string) => !x.endsWith(".json")) // ignore json
+    // .filter((x: string) => !x.endsWith(".js")) // ignore js
     .filter((x: string) => x.startsWith(".")) // only relative paths allowed
     .map((fileName: string) => {
       return join(dirname(file), fileName);
@@ -94,6 +101,9 @@ export function getImportsForFile(file: string) {
     .map((fileName: string) => {
       if (existsSync(`${fileName}.ts`)) {
         return `${fileName}.ts`;
+      }
+      if (existsSync(`${fileName}.tsx`)) {
+        return `${fileName}.tsx`;
       }
       if (existsSync(`${fileName}.js`)) {
         return `${fileName}.js`;
@@ -105,6 +115,12 @@ export function getImportsForFile(file: string) {
       if (existsSync(yo)) {
         return yo;
       }
-      throw new Error(`Unresolved import ${fileName} in ${file}`);
-    });
+      return undefined;
+      // throw new Error(`Unresolved import ${fileName} in ${file}`);
+    })
+    .filter(isDefined);
+}
+
+export function isDefined<T>(value: T | null | undefined): value is T {
+  return value !== null && value !== undefined;
 }
