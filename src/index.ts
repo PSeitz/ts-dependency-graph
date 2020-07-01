@@ -83,6 +83,8 @@ export function getImportsForFile(file: string) {
   return fileInfo.importedFiles
     .map((importedFile: FileReference) => importedFile.fileName)
     // .filter((fileName: string) => /^json/.test(fileName)) // remove json imports
+    .filter((x: string) => !x.endsWith(".scss"))
+    .filter((x: string) => !x.endsWith(".css"))
     .filter((x: string) => !x.endsWith(".json")) // ignore json
     .filter((x: string) => !x.endsWith(".js")) // ignore js
     .filter((x: string) => x.startsWith(".")) // only relative paths allowed

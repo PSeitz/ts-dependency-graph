@@ -10,6 +10,8 @@ Prints a dependency graph in dot format for your typescript project
 
 `ts_dependency_graph --start src/index.ts`
 
+E.g. use output with http://www.webgraphviz.com/
+
 Create svg, by piping result to dot tool
 
 ```
