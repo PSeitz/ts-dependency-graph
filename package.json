@@ -1,6 +1,6 @@
 {
   "name": "ts_dependency_graph",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "prints a dependency graph in dot format for your typescript project",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -9,6 +9,14 @@
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PSeitz/ts-dependency-graph.git"
+  },
+  "bugs": {
+    "url": "https://github.com/PSeitz/ts-dependency-graph/issues"
+  },
+  "homepage": "https://github.com/PSeitz/ts-dependency-graph",
   "author": "",
   "license": "ISC",
   "dependencies": {
