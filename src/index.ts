@@ -23,11 +23,12 @@ export function getCachedImportsForFile(file: string) {
 }
 
 const argv = yargs.options({
-  start: { type: 'string' },
-  aggregate_by_folder: { type: 'boolean', default:false },
+  start: { type: 'string', describe: "the starting file, for the analysis" },
+  aggregate_by_folder: { type: 'boolean', default:false, describe: "create graph on folder level", alias: 'agg'  },
   max_depth: { type: 'number', default:1000 },
-  verbose: { type: 'boolean', default:false },
-  basePath: { type: 'string', default: process.cwd() },
+  verbose: { type: 'boolean', default:false, describe: "prints information about ignored files", alias: 'v' },
+  hotspots: { type: 'boolean', default:false, describe: "identify hotspots, by analyzing number of incoming and outgoing edges", alias: 'h' },
+  base_path: { type: 'string', default: process.cwd(), describe: "calculates path relatives to the base path" },
 }).argv;
 
 // export async function start(start_path: string) {
@@ -37,10 +38,28 @@ const argv = yargs.options({
 // }
 
 let start_filo = argv.start;
-let basePath = argv.basePath;
+let base_path = argv.base_path;
 
-export async function start_scan(start_file: string) {
-  checkFile(start_file, 0)
+
+function calculate_hotspots(g: Graph, num_hotspots: number){
+  let nodes = g.get_nodes();
+  for (const node of nodes) {
+    let in_len= g.get_incoming_edges_for_node(node).length ;
+    let out_len= g.get_outgoing_edges_for_node(node).length;
+    node.hotspot = in_len * out_len;
+  }
+  let sortedbyhotspot = nodes.sort((a, b) => (b.hotspot || 0) - (a.hotspot|| 0));
+  for (let index = 0; index < num_hotspots; index++) {
+    sortedbyhotspot[index].hotspot_pos = index+1;
+  }
+}
+
+function print_result(start_file: string){
+
+  if(argv.hotspots){
+    calculate_hotspots(g, Math.min(5, g.get_nodes().length / 2));
+    calculate_hotspots(g_folders, Math.min(5, g_folders.get_nodes().length / 2));
+  }
 
   if(argv.verbose){
     console.log("Ignored Files: " + ignoredFiles.size)
@@ -48,10 +67,18 @@ export async function start_scan(start_file: string) {
   }
 
   if(argv.aggregate_by_folder){
-    console.log(g_folders.to_dot(dirname(relative(basePath, start_file))))
+    console.log(g_folders.to_dot(dirname(relative(base_path, start_file))))
   }else{
-    console.log(g.to_dot(relative(basePath, start_file)))
+    console.log(g.to_dot(relative(base_path, start_file)))
   }
+
+}
+
+
+export async function start_scan(start_file: string) {
+  checkFile(start_file, 0)
+
+  print_result(start_file);
   
 }
 void start_scan(start_filo!);
@@ -71,11 +98,11 @@ function checkFile(fileName: string, level: number) {
     if(!checkedFiles.has(importFile)){
       checkedFiles.add(importFile);
       nextLevel.push(importFile);
-      g.add_edge({node1: {path: relative(basePath, fileName), layer: info.layer}, node2: {path: relative(basePath, importFile), layer: importFileInfo.layer}});
     }
+    g.add_edge({node1: {path: relative(base_path, fileName), layer: info.layer}, node2: {path: relative(base_path, importFile), layer: importFileInfo.layer}});
 
-    let folder1 = dirname(relative(basePath, fileName));
-    let folder2 = dirname(relative(basePath, importFile));
+    let folder1 = dirname(relative(base_path, fileName));
+    let folder2 = dirname(relative(base_path, importFile));
 
     if(folder1 !== folder2){
       g_folders.add_edge({node1: {path: folder1, layer: info.layer }, node2: {path: folder2, layer: importFileInfo.layer}})
@@ -83,6 +110,9 @@ function checkFile(fileName: string, level: number) {
   });
 
   if(level === argv.max_depth){
+    if(argv.verbose){
+      console.log("Reached max_depth of " + argv.max_depth + " at "+ fileName);
+    }
     return;
   }
   for (const file of nextLevel) {
@@ -110,21 +140,11 @@ function getInfo(fileName: string): { layer: number; area: string } {
 }
 
 export function getImportsForFile(file: string) {
+  
   const fileInfo = ts.preProcessFile(readFileSync(file).toString());
+  if(argv.verbose) console.log("getImportsForFile " + file + ": " +fileInfo.importedFiles.map(el =>el.fileName).join(", "));
   return fileInfo.importedFiles
     .map((importedFile: FileReference) => importedFile.fileName)
-    // .filter((fileName: string) => /^json/.test(fileName)) // remove json imports
-    // .filter((fileName: string) => {
-    //   const ext = extname(fileName);
-    //   if(ext && ext !== ".ts" && ext !== ".tsx"){ // only allow ts and tsx or no extensions
-    //     return false;
-    //   }
-    //   return true;
-    // })
-    // .filter((x: string) => !x.endsWith(".scss"))
-    // .filter((x: string) => !x.endsWith(".css"))
-    // .filter((x: string) => !x.endsWith(".json")) // ignore json
-    // .filter((x: string) => !x.endsWith(".js")) // ignore js
     .filter((x: string) => x.startsWith(".")) // only relative paths allowed
     .map((fileName: string) => {
       return join(dirname(file), fileName);

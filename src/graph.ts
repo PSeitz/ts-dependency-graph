@@ -3,6 +3,8 @@ export interface IEdge {
     node2: INode;
 }
 export interface INode {
+    hotspot?: number; // colorize by hotspot information
+    hotspot_pos?: number; // position in all nodes if sorted by hotspot
     layer?: number; // colorize by layer from info.json in same folder {layer: 10}  - {layer: 100}
     path: string;
 }
@@ -26,6 +28,14 @@ export class Graph {
         return this.edges
             .filter(el => el.node1 === node || el.node2 === node);
     }
+    get_incoming_edges_for_node(node: INode) {
+        return this.edges
+            .filter(el => el.node2 === node);
+    }
+    get_outgoing_edges_for_node(node: INode) {
+        return this.edges
+            .filter(el => el.node1 === node);
+    }
 
     add_node(node: INode) {
         const exisiting_node = this.get_node_for_id(node.path);
@@ -45,6 +55,7 @@ export class Graph {
 
         const nodes = this.nodes
             .map(n => {
+                let fillcolor = n.hotspot_pos ? " fillcolor=green style=filled " : "";
                 let color = n.path === root_table ? ", color=orange" : "";
 
                 // if(n.path !== root_table && n.layer){
@@ -58,7 +69,7 @@ export class Graph {
                 //     label = "|{" + node_labels.join("|") + "}";
                 // }
 
-                return `"${n.path}" [shape=record ${color} label="${n.path}${label}"]`;
+                return `"${n.path}" [shape=record ${fillcolor} ${color} label="${n.path}${label}"]`;
 
             }).join("\n    ");
 
