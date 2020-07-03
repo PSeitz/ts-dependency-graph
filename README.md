@@ -24,7 +24,7 @@ Options:
 
 Use output with https://dreampuf.github.io/GraphvizOnline/, http://www.webgraphviz.com/, or by piping result to dot tool
 
-![graph_example](https://raw.githubusercontent.com/PSeitz/ts_dependency_graph/master/example.png)
+![graph_example](https://raw.githubusercontent.com/PSeitz/ts-dependency-graph/master/example.png)
 
 
 ```
