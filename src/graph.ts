@@ -56,7 +56,7 @@ export class Graph {
         const nodes = this.nodes
             .map(n => {
                 let fillcolor = n.hotspot_pos ? " fillcolor=green style=filled " : "";
-                let color = n.path === root_table ? ", color=orange" : "";
+                let color = n.path === root_table ? ", fillcolor=orange style=filled " : "";
 
                 // if(n.path !== root_table && n.layer){
                 //     color = `, color="#${n.layer.toString(16)}0000"`;

@@ -109,7 +109,7 @@ function checkFile(fileName: string, level: number) {
     }
   });
 
-  if(level === argv.max_depth){
+  if(level + 1 === argv.max_depth){
     if(argv.verbose){
       console.log("Reached max_depth of " + argv.max_depth + " at "+ fileName);
     }
