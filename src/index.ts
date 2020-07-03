@@ -26,6 +26,7 @@ const argv = yargs.options({
   start: { type: 'string', describe: "the starting file, for the analysis" },
   aggregate_by_folder: { type: 'boolean', default:false, describe: "create graph on folder level", alias: 'agg'  },
   max_depth: { type: 'number', default:1000 },
+  filter: { type: 'array', describe: "filters files containing the provided strings", default:[] as string[] },
   verbose: { type: 'boolean', default:false, describe: "prints information about ignored files", alias: 'v' },
   hotspots: { type: 'boolean', default:false, describe: "identify hotspots, by analyzing number of incoming and outgoing edges", alias: 'h' },
   base_path: { type: 'string', default: process.cwd(), describe: "calculates path relatives to the base path" },
@@ -77,9 +78,7 @@ function print_result(start_file: string){
 
 export async function start_scan(start_file: string) {
   checkFile(start_file, 0)
-
   print_result(start_file);
-  
 }
 void start_scan(start_filo!);
 
@@ -94,6 +93,11 @@ function checkFile(fileName: string, level: number) {
   let info = getInfo(fileName);
   const nextLevel: string[] = [];
   imports.forEach(importFile => {
+    for (const filter of argv.filter) {
+      if (importFile.includes(filter))
+        return;
+    }
+
     let importFileInfo = getInfo(importFile);
     if(!checkedFiles.has(importFile)){
       checkedFiles.add(importFile);

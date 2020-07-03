@@ -10,13 +10,20 @@ Prints a dependency graph in dot format for your typescript project. Supported f
 ```
  ts_dependency_graph --help
 Options:
-  --help                 Show help                                     [boolean]
-  --version              Show version number                           [boolean]
-  --start                                                               [string]
-  --aggregate_by_folder                               [boolean] [default: false]
+  --help                        Show help                              [boolean]
+  --version                     Show version number                    [boolean]
+  --start                       the starting file, for the analysis     [string]
+  --aggregate_by_folder, --agg  create graph on folder level
+                                                      [boolean] [default: false]
   --max_depth                                           [number] [default: 1000]
-  --verbose                                           [boolean] [default: false]
-  --base_path
+  --filter                      filters files containing the provided strings
+                                                           [array] [default: []]
+  --verbose, -v                 prints information about ignored files
+                                                      [boolean] [default: false]
+  --hotspots, -h                identify hotspots, by analyzing number of
+                                incoming and outgoing edges
+                                                      [boolean] [default: false]
+  --base_path                   calculates path relatives to the base path
    [string] [default: "/currentpath"]
 ```
 
