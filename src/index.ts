@@ -27,6 +27,7 @@ const argv = yargs.options({
   aggregate_by_folder: { type: 'boolean', default:false, describe: "create graph on folder level", alias: 'agg'  },
   max_depth: { type: 'number', default:1000 },
   filter: { type: 'array', describe: "filters files containing the provided strings", default:[] as string[] },
+  filter_edges: { type: 'array', describe: "filters edges containing the provided strings, the format is start_file=>target_file. The edges containing start_file and target_file are filtered. This is not just a postprocess on the graph. The edges wont't be followed. Note: put in quotes.", default:[] as string[] },
   verbose: { type: 'boolean', default:false, describe: "prints information about ignored files", alias: 'v' },
   hotspots: { type: 'boolean', default:false, describe: "identify hotspots, by analyzing number of incoming and outgoing edges", alias: 'h' },
   base_path: { type: 'string', default: process.cwd(), describe: "calculates path relatives to the base path" },
@@ -95,6 +96,14 @@ function checkFile(fileName: string, level: number) {
   imports.forEach(importFile => {
     for (const filter of argv.filter) {
       if (importFile.includes(filter))
+        return;
+    }
+    for (const filter of argv.filter_edges) {
+      let [part0, part1] = filter.split("=>");
+      if(!part0 || !part1){
+        throw new Error("Expected filter in the format start=>end, but got " + filter);
+      }
+      if (fileName.includes(part0) && importFile.includes(part1) )
         return;
     }
 
