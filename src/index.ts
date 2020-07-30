@@ -80,9 +80,9 @@ let base_path = argv.base_path;
 function calculate_hotspots(g: Graph, num_hotspots: number){
   let nodes = g.get_nodes();
   for (const node of nodes) {
-    let in_len= g.get_incoming_edges_for_node(node).length ;
+    let in_len= g.get_incoming_edges_for_node(node).length;
     let out_len= g.get_outgoing_edges_for_node(node).length;
-    node.hotspot = in_len * out_len;
+    node.hotspot = in_len * out_len * out_len;
   }
   let sortedbyhotspot = nodes.sort((a, b) => (b.hotspot || 0) - (a.hotspot|| 0));
   for (let index = 0; index < num_hotspots; index++) {

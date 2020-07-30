@@ -1,13 +1,25 @@
 export interface IEdge {
     node1: INode;
     node2: INode;
+    color?: string;
 }
 export interface INode {
+    color?: string;
     hotspot?: number; // colorize by hotspot information
     hotspot_pos?: number; // position in all nodes if sorted by hotspot
     layer?: number; // colorize by layer from info.json in same folder {layer: 10}  - {layer: 100}
     path: string;
 }
+
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+  
 
 export class Graph {
     private edges: IEdge[] = [];
@@ -79,7 +91,10 @@ export class Graph {
                 //     return `"${escape(e.node1.path)}" -> "${escape(e.node2.path)}" `;
                 // }).join("\n        ");
                 const edges_str = edges.map(e => {
-                    return `"${e.node1.path}" -> "${e.node2.path}" `;
+                    e.node1.color = e.node1.color || getRandomColor();
+                    e.color = e.node1.color;
+                    const color = e.color ? `[color = "${e.color}"]` : "";
+                    return `"${e.node1.path}" -> "${e.node2.path}" ${color}`;
                 }).join("\n        ");
                 const options = directed ? "" : "edge [dir=none]";
 
