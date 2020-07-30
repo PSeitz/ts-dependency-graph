@@ -9,8 +9,7 @@ import * as yargs from "yargs";
 
 const globProm = promisify(glob);
 
-const g = new Graph();
-const g_folders = new Graph();
+
 const checkedFiles = new Set();
 const ignoredFiles = new Set<string>();
 
@@ -28,6 +27,7 @@ const negation = "NOT "
 
 const argv = yargs.options({
   // target: { type: 'string', describe: "the target file, to see which dependencies are depending on the file. This is an inverse of start. choose either" },
+  color_edges: { type: 'boolean', default:true, describe: "use a random color to color the edges, group by node." },
   start: { type: 'string', describe: "the starting file, for the analysis. can also be an folder" },
   aggregate_by_folder: { type: 'boolean', default:false, describe: "create graph on folder level", alias: 'agg'  },
   max_depth: { type: 'number', default:1000 },
@@ -44,6 +44,9 @@ const argv = yargs.options({
 //   all_files.forEach(f => checkFile(f))
 //   console.log(g.to_dot())
 // }
+
+const g = new Graph(argv.color_edges);
+const g_folders = new Graph(argv.color_edges);
 
 function get_filter(filter: string){
   let is_negated = filter.startsWith(negation);

@@ -24,6 +24,10 @@ function getRandomColor() {
 export class Graph {
     private edges: IEdge[] = [];
     private nodes: INode[] = [];
+    public color_edges: boolean;
+    constructor(color_edges: boolean){
+        this.color_edges = color_edges;
+    }
     get_edges() {
         return this.edges;
     }
@@ -85,14 +89,17 @@ export class Graph {
 
             }).join("\n    ");
 
-        function add_edges_to_dot(edges: IEdge[], directed: boolean = true) {
+        function add_edges_to_dot(edges: IEdge[], directed: boolean, color_edges: boolean) {
             if (edges.length !== 0) {
                 // const edges_str = edges.map(e => {
                 //     return `"${escape(e.node1.path)}" -> "${escape(e.node2.path)}" `;
                 // }).join("\n        ");
                 const edges_str = edges.map(e => {
-                    e.node1.color = e.node1.color || getRandomColor();
-                    e.color = e.node1.color;
+                    if(color_edges){
+                        e.node1.color = e.node1.color || getRandomColor();
+                        e.color = e.node1.color;
+                    }
+                    
                     const color = e.color ? `[color = "${e.color}"]` : "";
                     return `"${e.node1.path}" -> "${e.node2.path}" ${color}`;
                 }).join("\n        ");
@@ -107,7 +114,7 @@ export class Graph {
         }
 
         const directed_edges = this.edges;
-        const graph1 = add_edges_to_dot(directed_edges, true);
+        const graph1 = add_edges_to_dot(directed_edges, true, this.color_edges);
 
         return `digraph graphname
 {
