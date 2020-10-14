@@ -49,6 +49,5 @@ export function post_process_graph(options: DependencyOptions, g: Graph) {
         }
         g.nodes = g.nodes.filter((node) => !removeNodes.has(node))
         g.edges = g.edges.filter((e) => !removeNodes.has(e.node2))
-        g.edges = g.edges.filter((e) => !removeNodes.has(e.node1))
     }
 }
