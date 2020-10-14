@@ -2,3 +2,4 @@ src
 example.png
 tsconfig.json
 tsc-react-example
+coverage
