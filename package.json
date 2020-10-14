@@ -7,7 +7,7 @@
   "scripts": {
     "prepublish": "tsc",
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --coverage"
   },
   "repository": {
     "type": "git",
@@ -21,14 +21,18 @@
   "license": "ISC",
   "dependencies": {
     "glob": "^7.1.6",
-    "typescript": "^3.9.5",
     "yargs": "^15.3.1"
   },
   "devDependencies": {
-    "ts-node": "^8.10.2",
     "@types/glob": "^7.1.2",
+    "@types/jest": "^26.0.14",
     "@types/node": "^14.0.14",
-    "@types/yargs": "^15.0.5"
+    "@types/yargs": "^15.0.5",
+    "jest": "^26.5.3",
+    "prettier": "2.1.2",
+    "ts-jest": "^26.4.1",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.7"
   },
   "bin": {
     "ts_dependency_graph": "./dist/index.js"

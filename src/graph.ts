@@ -22,16 +22,33 @@ function getRandomColor() {
   
 
 export class Graph {
-    private edges: IEdge[] = [];
-    private nodes: INode[] = [];
+    public edges: IEdge[] = [];
+    public nodes: INode[] = [];
     public color_edges: boolean;
+    public start_node?: INode;
     constructor(color_edges: boolean){
         this.color_edges = color_edges;
     }
-    get_edges() {
-        return this.edges;
-    }
-    get_nodes() {
+    // get_edges() {
+    //     return this.edges;
+    // }
+    // get_nodes() {
+    //     return this.nodes;
+    // }
+    walk(start_node: INode, cb: (edge:IEdge, path: IEdge[]) => boolean, path?: IEdge[], visited_edges?: Set<IEdge>) {
+        visited_edges = visited_edges || new Set();
+        path = path ||[]
+        const edges = this.get_edges_for_node(start_node);
+        for (const edge of edges) {
+            if(visited_edges.has(edge)) continue;
+            visited_edges.add(edge);
+            path.push(edge)
+            const should_continue = cb(edge, path);
+            if(should_continue){
+                this.walk(edge.node2, cb, path, visited_edges)
+            }
+            path.pop()
+        }
         return this.nodes;
     }
 
@@ -130,6 +147,7 @@ ${graph1}
         if(!this.edges.find(el => el.node1 == edge.node1 && el.node2 == edge.node2)){
             this.edges.push(edge);
         }
+        return edge;
     }
 
 }
