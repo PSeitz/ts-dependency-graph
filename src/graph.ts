@@ -37,7 +37,7 @@ export class Graph {
     // }
     walk(start_node: INode, cb: (edge:IEdge, path: IEdge[]) => boolean, path?: IEdge[], visited_edges?: Set<IEdge>) {
         visited_edges = visited_edges || new Set();
-        path = path ||[]
+        path = path || []
         const edges = this.get_edges_for_node(start_node);
         for (const edge of edges) {
             if(visited_edges.has(edge)) continue;

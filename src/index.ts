@@ -47,7 +47,7 @@ const argv = yargs
         show_path_to: {
             type: 'string',
             describe:
-                'remove all edges, which are not connecting start and show_path_to. Use in combination with max_depth to get the most direct path!',
+                'will display the shortest paths between start and show_path_to',
         },
     })
     .demandOption(['start'], 'Please provide start argument to work with this tool').argv

@@ -17,6 +17,7 @@ describe('graph', function () {
         // console.log(dot)
 
         expect(dot).not.toContain("midleaf")
+        expect(dot).toContain("leaf")
     })
     it('aggreagte_by_folder', async function () {
 

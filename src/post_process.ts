@@ -1,5 +1,5 @@
 import { DependencyOptions } from "."
-import { Graph, INode } from "./graph"
+import { Graph, IEdge, INode } from "./graph"
 
 function calculate_hotspots(g: Graph, num_hotspots: number) {
     let nodes = g.nodes
@@ -23,31 +23,80 @@ export function post_process_graph(options: DependencyOptions, g: Graph) {
     // filtering all nodes which are not on the edge between start and show path to
     if (options.show_path_to) {
         const path_to = options.show_path_to
-        const removeNodes = new Set<INode>()
-        for (const node of g.nodes) {
-            let toBeRemoved = true
+        const keepNodes = new Set<INode>()
+        // for (const node of g.nodes) {
 
-            g.walk(g.start_node!, (edge, path) => {
-                //check path connects both
-                if(path.length >= (options.max_depth || 1000)){
-                    return false;
-                }
+        //     g.walk(g.start_node!, (edge, path) => {
+        //         //check path connects both
+        //         if(path.length >= (options.max_depth || 1000)){
+        //             return false;
+        //         }
 
-                const connectsToTarget = path.some(
-                    (edge) => edge.node2.path.includes(path_to)
-                )
-                const connectsToNode = path.some(
-                    (edge) => edge.node2 == node
-                )
-                if (connectsToTarget && connectsToNode) {
-                    toBeRemoved = false
-                }
+        //         const connectsToTarget = path.some(
+        //             (edge) => edge.node2.path.includes(path_to)
+        //         )
+        //         const connectsToNode = path.some(
+        //             (edge) => edge.node2 == node
+        //         )
+        //         if (connectsToTarget && connectsToNode) {
+        //             // toBeRemoved = false
+        //             keepNodes.add(node)
+        //         }
+        //         return true;
+        //     })
+
+        //     // if (toBeRemoved && node !== g.start_node) removeNodes.add(node)
+        // }
+
+        let allPaths: IEdge[][] = []
+
+        g.walk(g.start_node!, (edge, path) => {
+            //check path connects both
+            if(path.length === 0){
                 return true;
-            })
+            }
+            if(path.length >= (options.max_depth || 1000)){
+                return false;
+            }
 
-            if (toBeRemoved) removeNodes.add(node)
+            const connectsToTarget = path.some(
+                (edge) => edge.node2.path.includes(path_to)
+            )
+            // const connectsToNode = path.some(
+            //     (edge) => edge.node2 == node
+            // )
+            if (connectsToTarget) {
+                // toBeRemoved = false
+                // path.map(p => p.node2)
+                // for (const step of path) {
+                //     keepNodes.add(step.node1)
+                //     keepNodes.add(step.node2)
+                // }
+                // console.log(path)
+                allPaths.push(path.slice(0));
+            }
+            return true;
+        })
+
+        let shortestPathLen = allPaths.reduce((len, el1) => Math.min(el1.length, len), 10000 );
+        let shortestPath = allPaths.find(el => shortestPathLen == el.length)!
+        let shortestPaths = allPaths.filter(el => shortestPathLen == el.length)!
+
+        let nodes = new Set();
+        let edges = new Set();
+        for (const path of shortestPaths) {
+            for (const edge of path) {
+                nodes.add(edge.node1)
+                nodes.add(edge.node2)
+                edges.add(edge)
+            }
         }
-        g.nodes = g.nodes.filter((node) => !removeNodes.has(node))
-        g.edges = g.edges.filter((e) => !removeNodes.has(e.node2))
+        // g.nodes = g.nodes.filter(node => keepNodes.has(node))
+        // console.log("MIAU")
+        // console.log(JSON.stringify(allPaths))
+        // console.log(shortestPath)
+        g.nodes = g.nodes.filter(node => nodes.has(node))
+        g.edges = g.edges.filter(e => edges.has(e))
+        // g.edges = g.edges.filter(e => keepNodes.has(e.node2))
     }
 }
