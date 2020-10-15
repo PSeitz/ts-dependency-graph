@@ -1,6 +1,6 @@
 {
   "name": "ts_dependency_graph",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "prints a dependency graph in dot format for your typescript project",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
