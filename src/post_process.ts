@@ -1,5 +1,5 @@
-import { DependencyOptions } from "."
-import { Graph, IEdge, INode } from "./graph"
+import { DependencyOptions } from '.'
+import { Graph, IEdge, INode } from './graph'
 
 function calculate_hotspots(g: Graph, num_hotspots: number) {
     let nodes = g.nodes
@@ -13,7 +13,6 @@ function calculate_hotspots(g: Graph, num_hotspots: number) {
         sortedbyhotspot[index].hotspot_pos = index + 1
     }
 }
-
 
 export function post_process_graph(options: DependencyOptions, g: Graph) {
     if (options.hotspots) {
@@ -52,16 +51,14 @@ export function post_process_graph(options: DependencyOptions, g: Graph) {
 
         g.walk(g.start_node!, (edge, path) => {
             //check path connects both
-            if(path.length === 0){
-                return true;
+            if (path.length === 0) {
+                return true
             }
-            if(path.length >= (options.max_depth || 1000)){
-                return false;
+            if (path.length >= (options.max_depth || 1000)) {
+                return false
             }
 
-            const connectsToTarget = path.some(
-                (edge) => edge.node2.path.includes(path_to)
-            )
+            const connectsToTarget = path.some((edge) => edge.node2.path.includes(path_to))
             // const connectsToNode = path.some(
             //     (edge) => edge.node2 == node
             // )
@@ -73,17 +70,17 @@ export function post_process_graph(options: DependencyOptions, g: Graph) {
                 //     keepNodes.add(step.node2)
                 // }
                 // console.log(path)
-                allPaths.push(path.slice(0));
+                allPaths.push(path.slice(0))
             }
-            return true;
+            return true
         })
 
-        let shortestPathLen = allPaths.reduce((len, el1) => Math.min(el1.length, len), 10000 );
-        let shortestPath = allPaths.find(el => shortestPathLen == el.length)!
-        let shortestPaths = allPaths.filter(el => shortestPathLen == el.length)!
+        let shortestPathLen = allPaths.reduce((len, el1) => Math.min(el1.length, len), 10000)
+        let shortestPath = allPaths.find((el) => shortestPathLen == el.length)!
+        let shortestPaths = allPaths.filter((el) => shortestPathLen == el.length)!
 
-        let nodes = new Set();
-        let edges = new Set();
+        let nodes = new Set()
+        let edges = new Set()
         for (const path of shortestPaths) {
             for (const edge of path) {
                 nodes.add(edge.node1)
@@ -95,8 +92,8 @@ export function post_process_graph(options: DependencyOptions, g: Graph) {
         // console.log("MIAU")
         // console.log(JSON.stringify(allPaths))
         // console.log(shortestPath)
-        g.nodes = g.nodes.filter(node => nodes.has(node))
-        g.edges = g.edges.filter(e => edges.has(e))
+        g.nodes = g.nodes.filter((node) => nodes.has(node))
+        g.edges = g.edges.filter((e) => edges.has(e))
         // g.edges = g.edges.filter(e => keepNodes.has(e.node2))
     }
 }

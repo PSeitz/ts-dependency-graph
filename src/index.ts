@@ -46,14 +46,12 @@ const argv = yargs
         base_path: { type: 'string', default: process.cwd(), describe: 'calculates path relatives to the base path' },
         show_path_to: {
             type: 'string',
-            describe:
-                'will display the shortest paths between start and show_path_to',
+            describe: 'will display the shortest paths between start and show_path_to',
         },
     })
     .demandOption(['start'], 'Please provide start argument to work with this tool').argv
 
-export type DependencyOptions = Partial<typeof argv> & Pick<typeof argv, "base_path"| "start">
-
+export type DependencyOptions = Partial<typeof argv> & Pick<typeof argv, 'base_path' | 'start'>
 
 function print_debug(g: Graph) {
     if (argv.verbose) {
@@ -67,5 +65,3 @@ print_debug(g)
 let dot = get_dot(g, argv)
 
 console.log(dot)
-
-

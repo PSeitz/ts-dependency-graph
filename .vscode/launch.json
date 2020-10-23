@@ -9,12 +9,7 @@
             "request": "launch",
             "name": "Run ts_dependency_graph tests",
             "program": "${workspaceFolder}/node_modules/jest/bin/jest.js",
-            "args": [
-                "--runInBand",
-                "--no-coverage",
-                "--forceExit",
-                "${fileBasenameNoExtension}"
-            ],
+            "args": ["--runInBand", "--no-coverage", "--forceExit", "${fileBasenameNoExtension}"],
             "windows": {
                 "program": "${workspaceFolder}/node_modules/jest/bin/jest"
             },

@@ -1,5 +1,5 @@
-import { leaf } from "./leaf";
+import { leaf } from './leaf'
 
-export function mid(){
-    leaf();
+export function mid() {
+    leaf()
 }

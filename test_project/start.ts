@@ -1,7 +1,7 @@
-import { mid } from "./mid";
-import { secondmidleaf } from "./secondmidleaf";
+import { mid } from './mid'
+import { secondmidleaf } from './secondmidleaf'
 
-export function start(){
-    mid();
-    secondmidleaf();
+export function start() {
+    mid()
+    secondmidleaf()
 }

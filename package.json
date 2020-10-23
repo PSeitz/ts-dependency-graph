@@ -1,40 +1,41 @@
 {
-  "name": "ts_dependency_graph",
-  "version": "1.1.2",
-  "description": "prints a dependency graph in dot format for your typescript project",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "prepublish": "tsc",
-    "build": "tsc",
-    "test": "jest --coverage"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/PSeitz/ts-dependency-graph.git"
-  },
-  "bugs": {
-    "url": "https://github.com/PSeitz/ts-dependency-graph/issues"
-  },
-  "homepage": "https://github.com/PSeitz/ts-dependency-graph",
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "glob": "^7.1.6",
-    "yargs": "^15.3.1"
-  },
-  "devDependencies": {
-    "@types/glob": "^7.1.2",
-    "@types/jest": "^26.0.14",
-    "@types/node": "^14.0.14",
-    "@types/yargs": "^15.0.5",
-    "jest": "^26.5.3",
-    "prettier": "2.1.2",
-    "ts-jest": "^26.4.1",
-    "ts-node": "^8.10.2",
-    "typescript": "^3.9.7"
-  },
-  "bin": {
-    "ts_dependency_graph": "./dist/index.js"
-  }
+    "name": "ts_dependency_graph",
+    "version": "1.1.2",
+    "description": "prints a dependency graph in dot format for your typescript project",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "prepublish": "tsc",
+        "build": "tsc",
+        "format": "npx prettier --write .",
+        "test": "jest --coverage"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/PSeitz/ts-dependency-graph.git"
+    },
+    "bugs": {
+        "url": "https://github.com/PSeitz/ts-dependency-graph/issues"
+    },
+    "homepage": "https://github.com/PSeitz/ts-dependency-graph",
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "glob": "^7.1.6",
+        "typescript": "^4.0.3",
+        "yargs": "^15.3.1"
+    },
+    "devDependencies": {
+        "@types/glob": "^7.1.2",
+        "@types/jest": "^26.0.14",
+        "@types/node": "^14.0.14",
+        "@types/yargs": "^15.0.5",
+        "jest": "^26.5.3",
+        "prettier": "2.1.2",
+        "ts-jest": "^26.4.1",
+        "ts-node": "^8.10.2"
+    },
+    "bin": {
+        "ts_dependency_graph": "./dist/index.js"
+    }
 }

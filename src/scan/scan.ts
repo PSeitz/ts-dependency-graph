@@ -133,6 +133,6 @@ function getInfo(fileName: string): { layer: number; area: string } {
 }
 
 export async function getSrcFiles(srcRoot: string) {
-  const files = await globProm(`${srcRoot}/**/*.ts`)
-  return files.filter((file) => !file.endsWith('.d.ts'))
+    const files = await globProm(`${srcRoot}/**/*.ts`)
+    return files.filter((file) => !file.endsWith('.d.ts'))
 }

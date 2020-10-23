@@ -2,8 +2,8 @@ import { DependencyOptions } from '..'
 
 export const negation = 'NOT '
 
-export type ScanFilter = ReturnType<typeof get_filter>;
-export type ScanFilters = ReturnType<typeof get_filters>;
+export type ScanFilter = ReturnType<typeof get_filter>
+export type ScanFilters = ReturnType<typeof get_filters>
 
 export function get_filters(options: DependencyOptions) {
     const node_filters = (options.filter || []).map(get_filter)
@@ -25,7 +25,8 @@ export function get_filters(options: DependencyOptions) {
     }
 
     return {
-        node_filters, edge_filters
+        node_filters,
+        edge_filters,
     }
 }
 
