@@ -75,10 +75,6 @@ export class Graph {
     }
 
     to_dot(root_node?: string) {
-        function escape(text: string) {
-            return text.replace(new RegExp('/', 'g'), '_')
-        }
-
         let relcnt = 1
 
         const nodes = this.nodes

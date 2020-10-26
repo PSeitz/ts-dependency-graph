@@ -49,27 +49,32 @@ describe('graph', function () {
         expect(dot_depth_1).not.toContain('"mid.ts" -> "leafs/leaf.ts"')
         expect(dot_depth_2).toContain('"mid.ts" -> "leafs/leaf.ts"')
     })
-    it('filter_edge', async function () {
+    it('filter_edge verbose', async function () {
         const options1: DependencyOptions = {
             start: 'test_project/start.ts',
-            filter_edges: ['mid=>leaf']
+            filter_edges: ['mid=>leaf'],
+            verbose_filter: true,
+            verbose: true
         }
         let dot_depth_1 = get_dot(get_graph(options1), options1)
 
         expect(dot_depth_1).not.toContain('"test_project/mid.ts" -> "test_project/leafs/leaf.ts"')
     })
-    it('hotspots', async function () {
+    it('hotspots, color edges', async function () {
         const options: DependencyOptions = {
             start: 'test_project/start.ts',
+            color_edges: true,
             hotspots: true,
         }
         let dot = get_dot(get_graph(options), options)
+        expect(dot).toContain('color')
     })
     it('start at folder level should contain all files', async function () {
         const options: DependencyOptions = {
             start: 'test_project',
         }
         let dot = get_dot(get_graph(options), options)
+        
         expect(dot).toContain('leaf.ts')
         expect(dot).toContain('start.ts')
         expect(dot).toContain('secondmidleaf.ts')
