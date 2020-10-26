@@ -74,7 +74,7 @@ export class Graph {
         return node
     }
 
-    to_dot(root_table?: string) {
+    to_dot(root_node?: string) {
         function escape(text: string) {
             return text.replace(new RegExp('/', 'g'), '_')
         }
@@ -84,9 +84,9 @@ export class Graph {
         const nodes = this.nodes
             .map((n) => {
                 let fillcolor = n.hotspot_pos ? ' fillcolor=green style=filled ' : ''
-                let color = n.path === root_table ? ', fillcolor=orange style=filled ' : ''
+                let color = n.path === root_node ? ', fillcolor=orange style=filled ' : ''
 
-                // if(n.path !== root_table && n.layer){
+                // if(n.path !== root_node && n.layer){
                 //     color = `, color="#${n.layer.toString(16)}0000"`;
                 // }
 

@@ -9,8 +9,9 @@ import { isDefined } from '../utils'
 export const checkedFiles = new Set()
 export const ignoredFiles = new Set<string>()
 
-const cache: { [index: string]: PathObj[] } = {}
-export function getCachedImportsForFile(file: string, options: DependencyOptions) {
+export type IFileCache = { [index: string]: PathObj[] };
+
+export function getCachedImportsForFile(file: string, options: DependencyOptions, cache: IFileCache) {
     if (!cache[file]) {
         cache[file] = getImportsForFile(file, options)
     }
@@ -33,12 +34,6 @@ function getImportsForFile(file: string, options: DependencyOptions) {
             }
             if (existsSync(`${fileName}.tsx`)) {
                 return `${fileName}.tsx`
-            }
-            if (existsSync(`${fileName}.js`)) {
-                return `${fileName}.js`
-            }
-            if (existsSync(`${fileName}.d.ts`)) {
-                return `${fileName}.d.ts`
             }
             const yo = join(fileName, 'index.ts').normalize()
             if (existsSync(yo)) {

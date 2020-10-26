@@ -5,24 +5,23 @@ import glob from 'glob'
 import { promisify } from 'util'
 import { ScanFilters, isFilteredByCond } from './scan_filter'
 import { Graph } from '../graph'
-import { checkedFiles, getCachedImportsForFile } from './imports'
+import { checkedFiles, getCachedImportsForFile, IFileCache } from './imports'
 import { convertPath, toPosixPath } from '../path'
-
-const globProm = promisify(glob)
 
 export type PathObj = ReturnType<typeof convertPath>
 
-export async function start_scan(options: DependencyOptions, filters: ScanFilters, g: Graph, g_folders: Graph) {
+export function start_scan(options: DependencyOptions, filters: ScanFilters, g: Graph, g_folders: Graph) {
     if (lstatSync(options.start).isDirectory()) {
         if (options.show_path_to) {
             throw new Error('start_file needs to be a file, when used with show_path_to')
         }
-        let files = await getSrcFiles(options.start)
+        let files = getSrcFiles(options.start)
+        console.log(files)
         for (const file of files) {
-            checkFile(convertPath(file), options, filters, g, g_folders, 0)
+            checkFile(convertPath(file), options, filters, g, g_folders, 0, {})
         }
     } else {
-        checkFile(convertPath(options.start), options, filters, g, g_folders, 0)
+        checkFile(convertPath(options.start), options, filters, g, g_folders, 0, {})
     }
     // post_process_graph()
     // print_result(start_file)
@@ -34,9 +33,10 @@ function checkFile(
     filters: ScanFilters,
     g: Graph,
     g_folders: Graph,
-    level: number
+    level: number,
+    cache: IFileCache,
 ) {
-    const imports = getCachedImportsForFile(fileName.orig_path, options)
+    const imports = getCachedImportsForFile(fileName.orig_path, options, cache)
     let info = getInfo(fileName.orig_path)
     const nextLevel: PathObj[] = []
     imports.forEach((importFile) => {
@@ -83,14 +83,14 @@ function checkFile(
             nextLevel.push(importFile)
         }
         let edge = g.add_edge({
-            node1: { path: relative(options.base_path, fileName.normalized_path), layer: info.layer },
-            node2: { path: relative(options.base_path, importFile.normalized_path), layer: importFileInfo.layer },
+            node1: { path: relative(options.base_path || "", fileName.normalized_path), layer: info.layer },
+            node2: { path: relative(options.base_path || "", importFile.normalized_path), layer: importFileInfo.layer },
         })
         if (level === 0) {
             g.start_node = edge.node1
         }
-        let folder1 = dirname(relative(options.base_path, fileName.orig_path))
-        let folder2 = dirname(relative(options.base_path, importFile.orig_path))
+        let folder1 = dirname(relative(options.base_path || "", fileName.orig_path))
+        let folder2 = dirname(relative(options.base_path || "", importFile.orig_path))
 
         if (folder1 !== folder2) {
             g_folders.add_edge({
@@ -107,7 +107,7 @@ function checkFile(
         return
     }
     for (const file of nextLevel) {
-        checkFile(file, options, filters, g, g_folders, level + 1)
+        checkFile(file, options, filters, g, g_folders, level + 1, cache)
     }
 }
 
@@ -132,7 +132,7 @@ function getInfo(fileName: string): { layer: number; area: string } {
     return { layer: 1000, area: 'universe' }
 }
 
-export async function getSrcFiles(srcRoot: string) {
-    const files = await globProm(`${srcRoot}/**/*.ts`)
+export function getSrcFiles(srcRoot: string) {
+    const files = glob.sync(`${srcRoot}/**/*.ts`)
     return files.filter((file) => !file.endsWith('.d.ts'))
 }

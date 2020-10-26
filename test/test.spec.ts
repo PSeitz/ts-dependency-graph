@@ -1,33 +1,78 @@
 import { Graph } from '../src/graph'
 import type { DependencyOptions } from '../src'
 import { get_dot, get_graph } from '../src/lib'
-
 describe('graph', function () {
     it('show_path_to', async function () {
         const options: DependencyOptions = {
             start: 'test_project/start.ts',
             base_path: '',
-            show_path_to: 'test_project/leaf.ts',
+            show_path_to: 'test_project/leafs/leaf.ts',
         }
         const g = get_graph(options)
         let dot = get_dot(g, options)
 
-        // console.log(dot)
-
-        expect(dot).not.toContain('midleaf')
+        expect(dot).not.toContain('midleaf') // won't contain, since it takes only the shortest path
         expect(dot).toContain('leaf')
     })
-    it('aggreagte_by_folder', async function () {
+    it('base_path', async function () {
         const options: DependencyOptions = {
             start: 'test_project/start.ts',
-            base_path: '',
+            base_path: 'test_project',
+        }
+        let dot = get_dot(get_graph(options), options)
+        expect(dot).not.toContain('test_project')
+    })
+    it('aggregate_by_folder', async function () {
+        const options: DependencyOptions = {
+            start: 'test_project/start.ts',
             aggregate_by_folder: true,
         }
         const g = get_graph(options)
         let dot = get_dot(g, options)
 
-        console.log(dot)
+        expect(dot).toContain('"test_project" -> "test_project/leafs"')
+    })
+    it('max_depth', async function () {
+        const options1: DependencyOptions = {
+            start: 'test_project/start.ts',
+            base_path: 'test_project',
+            max_depth: 1,
+        }
+        const options2: DependencyOptions = {
+            start: 'test_project/start.ts',
+            base_path: 'test_project',
+            max_depth: 2,
+        }
+        let dot_depth_1 = get_dot(get_graph(options1), options1)
+        let dot_depth_2 = get_dot(get_graph(options2), options2)
 
-        // expect(dot).not.toContain("midleaf")
+        expect(dot_depth_1).not.toContain('"mid.ts" -> "leafs/leaf.ts"')
+        expect(dot_depth_2).toContain('"mid.ts" -> "leafs/leaf.ts"')
+    })
+    it('filter_edge', async function () {
+        const options1: DependencyOptions = {
+            start: 'test_project/start.ts',
+            filter_edges: ['mid=>leaf']
+        }
+        let dot_depth_1 = get_dot(get_graph(options1), options1)
+
+        expect(dot_depth_1).not.toContain('"test_project/mid.ts" -> "test_project/leafs/leaf.ts"')
+    })
+    it('hotspots', async function () {
+        const options: DependencyOptions = {
+            start: 'test_project/start.ts',
+            hotspots: true,
+        }
+        let dot = get_dot(get_graph(options), options)
+    })
+    it('start at folder level should contain all files', async function () {
+        const options: DependencyOptions = {
+            start: 'test_project',
+        }
+        let dot = get_dot(get_graph(options), options)
+        expect(dot).toContain('leaf.ts')
+        expect(dot).toContain('start.ts')
+        expect(dot).toContain('secondmidleaf.ts')
+        expect(dot).toContain('mid.ts')
     })
 })

@@ -28,7 +28,7 @@ const argv = yargs
         },
         filter_edges: {
             type: 'array',
-            describe: `removes edges containing the provided strings, the format is start_file=>target_file. The edges containing start_file AND target_file are filtered. Start and target can be negated with '${negation}' in front . (Currently) This is not just a postprocess on the graph. The edges won't be followed. Note: put in quotes.`,
+            describe: `removes edges containing the provided strings, the format is start_file=>target_file. The edges containing start_file AND target_file are removed. Start and target can be negated with '${negation}' in front . (Currently) This is not just a postprocess on the graph. The edges won't be followed. Note: put in quotes.`,
             default: [] as string[],
         },
         verbose: { type: 'boolean', default: false, describe: 'prints information about ignored files', alias: 'v' },
@@ -51,7 +51,7 @@ const argv = yargs
     })
     .demandOption(['start'], 'Please provide start argument to work with this tool').argv
 
-export type DependencyOptions = Partial<typeof argv> & Pick<typeof argv, 'base_path' | 'start'>
+export type DependencyOptions = Partial<typeof argv> & Pick<typeof argv, 'start'>
 
 function print_debug(g: Graph) {
     if (argv.verbose) {
@@ -59,6 +59,8 @@ function print_debug(g: Graph) {
         console.log([...ignoredFiles].join(', '))
     }
 }
+
+console.log(argv)
 
 let g = get_graph(argv)
 print_debug(g)
