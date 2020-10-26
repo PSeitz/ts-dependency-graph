@@ -1,4 +1,6 @@
 [![NPM Downloads](https://img.shields.io/npm/dm/ts_dependency_graph.svg?style=flat)](https://npmjs.org/package/ts_dependency_graph)
+![Node.js CI](https://github.com/PSeitz/ts-dependency-graph/workflows/Node.js%20CI/badge.svg)
+
 
 # TS-Dependency-Graph
 
