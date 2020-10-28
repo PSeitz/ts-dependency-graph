@@ -53,7 +53,6 @@ export function post_process_graph(options: DependencyOptions, g: Graph) {
 
         let nodes = new Set()
         let edges = new Set()
-        console.log(shortestPaths)
         for (const path of shortestPaths) {
             const randomPathColor = getRandomColor()
             for (const edge of path) {
