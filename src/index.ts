@@ -60,8 +60,6 @@ function print_debug(g: Graph) {
     }
 }
 
-console.log(argv)
-
 let g = get_graph(argv)
 print_debug(g)
 let dot = get_dot(g, argv)
