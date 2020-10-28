@@ -1,5 +1,5 @@
 import { DependencyOptions } from '.'
-import { Graph, IEdge, INode } from './graph'
+import { getRandomColor, Graph, IEdge, INode } from './graph'
 
 function calculate_hotspots(g: Graph, num_hotspots: number) {
     let nodes = g.nodes
@@ -53,8 +53,11 @@ export function post_process_graph(options: DependencyOptions, g: Graph) {
 
         let nodes = new Set()
         let edges = new Set()
+        console.log(shortestPaths)
         for (const path of shortestPaths) {
+            const randomPathColor = getRandomColor()
             for (const edge of path) {
+                edge.color = randomPathColor;
                 nodes.add(edge.node1)
                 nodes.add(edge.node2)
                 edges.add(edge)

@@ -11,7 +11,7 @@ export interface INode {
     path: string
 }
 
-function getRandomColor() {
+export function getRandomColor() {
     var letters = '0123456789ABCDEF'
     var color = '#'
     for (var i = 0; i < 6; i++) {
@@ -34,18 +34,22 @@ export class Graph {
     // get_nodes() {
     //     return this.nodes;
     // }
-    walk(start_node: INode, cb: (edge: IEdge, path: IEdge[]) => boolean, path?: IEdge[], visited_edges?: Set<IEdge>) {
+    walk(start_node: INode, cb: (edge: IEdge, path: IEdge[]) => boolean, path?: IEdge[], visited_edges?: Set<IEdge>, visited_nodes?: Set<INode>) {
         visited_edges = visited_edges || new Set()
+        visited_nodes = visited_nodes || new Set()
         path = path || []
         const edges = this.get_edges_for_node(start_node)
         for (const edge of edges) {
+            if (visited_nodes.has(edge.node2)) continue
+            visited_nodes.add(edge.node2)
             if (visited_edges.has(edge)) continue
             visited_edges.add(edge)
             path.push(edge)
             const should_continue = cb(edge, path)
             if (should_continue) {
-                this.walk(edge.node2, cb, path, visited_edges)
+                this.walk(edge.node2, cb, path, visited_edges, visited_nodes)
             }
+            visited_nodes.delete(edge.node2)
             path.pop()
         }
         return this.nodes
@@ -77,13 +81,15 @@ export class Graph {
     to_dot(root_node?: string) {
         let relcnt = 1
 
-        function colorToNode(color:string){
+        function colorToNode(color?:string){
+            if(!color) return
             return `, fillcolor=${color} style=filled `
         }
         const nodes = this.nodes
             .map((n) => {
-                let fillcolor = n.hotspot_pos ? colorToNode("green") : ''
-                let color = n.color ? colorToNode(n.color) : (n.path=== root_node ? colorToNode("orange") : '')
+                if(n.path === root_node && !n.color) n.color = "orange";
+                if(n.hotspot_pos && !n.color) n.color = "green";
+                let fillcolor = colorToNode(n.color) ?? ""
 
                 // if(n.path !== root_node && n.layer){
                 //     color = `, color="#${n.layer.toString(16)}0000"`;
@@ -96,7 +102,7 @@ export class Graph {
                 //     label = "|{" + node_labels.join("|") + "}";
                 // }
 
-                return `"${n.path}" [shape=record ${fillcolor} ${color} label="${n.path}${label}"]`
+                return `"${n.path}" [shape=record ${fillcolor} label="${n.path}${label}"]`
             })
             .join('\n    ')
 
@@ -108,8 +114,8 @@ export class Graph {
                 const edges_str = edges
                     .map((e) => {
                         if (color_edges) {
-                            e.node1.color = e.node1.color || getRandomColor()
-                            e.color = e.node1.color
+                            e.node1.color = e.node1.color || e.color || getRandomColor()
+                            e.color = e.color || e.node1.color
                         }
 
                         const color = e.color ? `[color = "${e.color}"]` : ''
