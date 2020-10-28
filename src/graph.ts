@@ -77,10 +77,13 @@ export class Graph {
     to_dot(root_node?: string) {
         let relcnt = 1
 
+        function colorToNode(color:string){
+            return `, fillcolor=${color} style=filled `
+        }
         const nodes = this.nodes
             .map((n) => {
-                let fillcolor = n.hotspot_pos ? ' fillcolor=green style=filled ' : ''
-                let color = n.path === root_node ? ', fillcolor=orange style=filled ' : ''
+                let fillcolor = n.hotspot_pos ? colorToNode("green") : ''
+                let color = n.color ? colorToNode(n.color) : (n.path=== root_node ? colorToNode("orange") : '')
 
                 // if(n.path !== root_node && n.layer){
                 //     color = `, color="#${n.layer.toString(16)}0000"`;

@@ -23,29 +23,11 @@ export function post_process_graph(options: DependencyOptions, g: Graph) {
     if (options.show_path_to) {
         const path_to = options.show_path_to
         const keepNodes = new Set<INode>()
-        // for (const node of g.nodes) {
-
-        //     g.walk(g.start_node!, (edge, path) => {
-        //         //check path connects both
-        //         if(path.length >= (options.max_depth || 1000)){
-        //             return false;
-        //         }
-
-        //         const connectsToTarget = path.some(
-        //             (edge) => edge.node2.path.includes(path_to)
-        //         )
-        //         const connectsToNode = path.some(
-        //             (edge) => edge.node2 == node
-        //         )
-        //         if (connectsToTarget && connectsToNode) {
-        //             // toBeRemoved = false
-        //             keepNodes.add(node)
-        //         }
-        //         return true;
-        //     })
-
-        //     // if (toBeRemoved && node !== g.start_node) removeNodes.add(node)
-        // }
+        for (const node of g.nodes) {
+            if(node.path.includes(path_to)){
+                node.color = "red";
+            }
+        }
 
         let allPaths: IEdge[][] = []
 
@@ -59,24 +41,14 @@ export function post_process_graph(options: DependencyOptions, g: Graph) {
             }
 
             const connectsToTarget = path.some((edge) => edge.node2.path.includes(path_to))
-            // const connectsToNode = path.some(
-            //     (edge) => edge.node2 == node
-            // )
             if (connectsToTarget) {
-                // toBeRemoved = false
-                // path.map(p => p.node2)
-                // for (const step of path) {
-                //     keepNodes.add(step.node1)
-                //     keepNodes.add(step.node2)
-                // }
-                // console.log(path)
                 allPaths.push(path.slice(0))
             }
             return true
         })
 
         let shortestPathLen = allPaths.reduce((len, el1) => Math.min(el1.length, len), 10000)
-        let shortestPath = allPaths.find((el) => shortestPathLen == el.length)!
+        // let shortestPath = allPaths.find((el) => shortestPathLen == el.length)!
         let shortestPaths = allPaths.filter((el) => shortestPathLen == el.length)!
 
         let nodes = new Set()
