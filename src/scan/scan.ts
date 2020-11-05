@@ -16,7 +16,6 @@ export function start_scan(options: DependencyOptions, filters: ScanFilters, g: 
             throw new Error('start_file needs to be a file, when used with show_path_to')
         }
         let files = getSrcFiles(options.start)
-        console.log(files)
         for (const file of files) {
             checkFile(convertPath(file), options, filters, g, g_folders, 0, {})
         }

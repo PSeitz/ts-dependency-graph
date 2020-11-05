@@ -2,6 +2,9 @@ import { Graph } from '../src/graph'
 import type { DependencyOptions } from '../src'
 import { get_dot, get_graph } from '../src/lib'
 describe('graph', function () {
+
+    // TODO ADD CIRCULAR DEPENDENCY TEST
+
     it('show_path_to', async function () {
         const options: DependencyOptions = {
             start: 'test_project/start.ts',
@@ -80,4 +83,5 @@ describe('graph', function () {
         expect(dot).toContain('secondmidleaf.ts')
         expect(dot).toContain('mid.ts')
     })
+
 })
