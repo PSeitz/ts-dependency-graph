@@ -83,5 +83,17 @@ describe('graph', function () {
         expect(dot).toContain('secondmidleaf.ts')
         expect(dot).toContain('mid.ts')
     })
+    it('scan directory, filter should cover start nodes', async function () {
+        const options: DependencyOptions = {
+            start: 'test_project', // will start scanning at all files in the folder | start.s and mid.ts
+            filter: ["start"]
+        }
+        let dot = get_dot(get_graph(options), options)
+        
+        expect(dot).toContain('leaf.ts')
+        expect(dot).not.toContain('start.ts')
+        expect(dot).not.toContain('secondmidleaf.ts') // is only reachable via start.ts
+        expect(dot).toContain('mid.ts')
+    })
 
 })

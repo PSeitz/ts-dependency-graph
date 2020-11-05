@@ -35,6 +35,9 @@ function checkFile(
     level: number,
     cache: IFileCache,
 ) {
+    for (const filter of filters.node_filters) {
+        if (isFilteredByCond(filter, fileName.normalized_path, options)) return
+    }
     const imports = getCachedImportsForFile(fileName.orig_path, options, cache)
     let info = getInfo(fileName.orig_path)
     const nextLevel: PathObj[] = []
