@@ -13,7 +13,7 @@ const argv = yargs
             default: true,
             describe: 'use a random color to color the edges, group by node.',
         },
-        start: { type: 'string', describe: 'the starting file, for the analysis. can also be an folder' },
+        start: { type: 'string', describe: 'the starting file, for the analysis. can also be a folder or a glob for multiple starting files.' },
         aggregate_by_folder: {
             type: 'boolean',
             default: false,

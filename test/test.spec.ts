@@ -83,6 +83,27 @@ describe('graph', function () {
         expect(dot).toContain('secondmidleaf.ts')
         expect(dot).toContain('mid.ts')
     })
+    it('start at folder level with glob, should contain all files', async function () {
+        const options: DependencyOptions = {
+            start: 'test_project/**/*.ts',
+        }
+        let dot = get_dot(get_graph(options), options)
+        
+        expect(dot).toContain('leaf.ts')
+        expect(dot).toContain('start.ts')
+        expect(dot).toContain('secondmidleaf.ts')
+        expect(dot).toContain('mid.ts')
+    })
+    it('start at folder level with glob, should have as start_files', async function () {
+        const options: DependencyOptions = {
+            start: 'test_project/*.ts',
+        }
+        let graph = get_graph(options);
+        
+        expect([...graph.start_nodes]).toHaveLength(2) // glob should get mid and start as start_nodes
+        expect([...graph.start_nodes].map(el => el.path)).toContain("test_project/start.ts")
+        expect([...graph.start_nodes].map(el => el.path)).toContain("test_project/mid.ts")
+    })
     it('scan directory, filter should cover start nodes', async function () {
         const options: DependencyOptions = {
             start: 'test_project', // will start scanning at all files in the folder | start.s and mid.ts

@@ -24,7 +24,7 @@ export class Graph {
     public edges: IEdge[] = []
     public nodes: INode[] = []
     public color_edges: boolean
-    public start_node?: INode
+    public start_nodes: Set<INode> = new Set()
     constructor(color_edges: boolean) {
         this.color_edges = color_edges
     }

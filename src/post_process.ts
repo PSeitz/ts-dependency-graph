@@ -23,6 +23,7 @@ export function post_process_graph(options: DependencyOptions, g: Graph) {
     if (options.show_path_to) {
         const path_to = options.show_path_to
         const keepNodes = new Set<INode>()
+        // Color target node
         for (const node of g.nodes) {
             if(node.path.includes(path_to)){
                 node.color = "red";
@@ -31,37 +32,41 @@ export function post_process_graph(options: DependencyOptions, g: Graph) {
 
         let allPaths: IEdge[][] = []
 
-        g.walk(g.start_node!, (edge, path) => {
-            //check path connects both
-            if (path.length === 0) {
-                return true
-            }
-            if (path.length >= (options.max_depth || 1000)) {
-                return false
-            }
-
-            const connectsToTarget = path.some((edge) => edge.node2.path.includes(path_to))
-            if (connectsToTarget) {
-                allPaths.push(path.slice(0))
-            }
-            return true
-        })
-
-        let shortestPathLen = allPaths.reduce((len, el1) => Math.min(el1.length, len), 10000)
-        // let shortestPath = allPaths.find((el) => shortestPathLen == el.length)!
-        let shortestPaths = allPaths.filter((el) => shortestPathLen == el.length)!
-
         let nodes = new Set()
         let edges = new Set()
-        for (const path of shortestPaths) {
-            const randomPathColor = getRandomColor()
-            for (const edge of path) {
-                edge.color = randomPathColor;
-                nodes.add(edge.node1)
-                nodes.add(edge.node2)
-                edges.add(edge)
+
+        for (const start_node of g.start_nodes!) {
+            g.walk(start_node!, (edge, path) => {
+                //check path connects both
+                if (path.length === 0) {
+                    return true
+                }
+                if (path.length >= (options.max_depth || 1000)) {
+                    return false
+                }
+    
+                const connectsToTarget = path.some((edge) => edge.node2.path.includes(path_to))
+                if (connectsToTarget) {
+                    allPaths.push(path.slice(0))
+                }
+                return true
+            })
+    
+            let shortestPathLen = allPaths.reduce((len, el1) => Math.min(el1.length, len), 10000)
+            // let shortestPath = allPaths.find((el) => shortestPathLen == el.length)!
+            let shortestPaths = allPaths.filter((el) => shortestPathLen == el.length)!
+            
+            for (const path of shortestPaths) {
+                const randomPathColor = getRandomColor()
+                for (const edge of path) {
+                    edge.color = randomPathColor;
+                    nodes.add(edge.node1)
+                    nodes.add(edge.node2)
+                    edges.add(edge)
+                }
             }
         }
+        
         // g.nodes = g.nodes.filter(node => keepNodes.has(node))
         // console.log("MIAU")
         // console.log(JSON.stringify(allPaths))
