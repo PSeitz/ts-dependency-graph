@@ -14,21 +14,44 @@ Prints a dependency graph in dot format for your typescript project. Supported f
 ```
  ts_dependency_graph --help
 Options:
-  --help                        Show help                              [boolean]
-  --version                     Show version number                    [boolean]
-  --start                       the starting file, for the analysis     [string]
-  --aggregate_by_folder, --agg  create graph on folder level
+  --help                          Show help                            [boolean]
+  --version                       Show version number                  [boolean]
+  --color_edges                   use a random color to color the edges, group
+                                  by node.             [boolean] [default: true]
+  --start                         the starting file, for the analysis. can also
+                                  be a folder or a glob for multiple starting
+                                  files.                     [string] [required]
+  --graph_folder, --graphfolders  groups files in their folder in the graph
+                                                      [boolean] [default: false]
+  --aggregate_by_folder, --agg    create graph on folder level
                                                       [boolean] [default: false]
   --max_depth                                           [number] [default: 1000]
-  --filter                      filters files containing the provided strings
+  --filter                        removes files containing the provided
+                                  strings. Can be negated with - in front, to
+                                  remove files not containing the filter. e.g.
+                                  'NOT module1' - everything not containing
+                                  module1.ts will be filtered.
                                                            [array] [default: []]
-  --verbose, -v                 prints information about ignored files
+  --filter_edges                  Experimental. removes edges containing the
+                                  provided strings, the format is
+                                  start_file=>target_file. The edges containing
+                                  start_file AND target_file are removed. Start
+                                  and target can be negated with 'NOT ' in front
+                                  . (Currently) This is not just a postprocess
+                                  on the graph. The edges won't be followed.
+                                  Note: put in quotes.     [array] [default: []]
+  --verbose, -v                   prints information about ignored files
                                                       [boolean] [default: false]
-  --hotspots, -h                identify hotspots, by analyzing number of
-                                incoming and outgoing edges
+  --verbose_filter                prints information about filtered files and
+                                  edges               [boolean] [default: false]
+  --hotspots, -h                  identify hotspots, by analyzing number of
+                                  incoming and outgoing edges
                                                       [boolean] [default: false]
-  --base_path                   calculates path relatives to the base path
-   [string] [default: "/currentpath"]
+  --base_path                     calculates path relatives to the base path
+    [string] [default: "/home/pascal/LinuxData/Development/ts-dependency-graph"]
+  --show_path_to                  will display the shortest paths between start
+                                  and show_path_to                      [string]
+
 ```
 
 `ts_dependency_graph --start src/index.ts`
@@ -38,8 +61,11 @@ Use output with https://dreampuf.github.io/GraphvizOnline/, http://www.webgraphv
 ![graph_example](https://raw.githubusercontent.com/PSeitz/ts-dependency-graph/master/example.png)
 
 ```
-ts_dependency_graph --start src/index.ts  | dot -T svg > dependencygraph.svg
+ts_dependency_graph --start src/index.ts --graph_folder | dot -T svg > dependencygraph.svg
 ```
+
+
+
 
 #### Use from Github Repo
 
@@ -48,5 +74,7 @@ ts_dependency_graph --start src/index.ts  | dot -T svg > dependencygraph.svg
 Usage on self
 
 ```
-npx ts-node src/index.ts --start src/index.ts
+npx ts-node src/index.ts --start src/index.ts --graph_folder | dot -T svg > dependencygraph.svg
 ```
+
+![Self Graph](./dependencygraph.svg)
