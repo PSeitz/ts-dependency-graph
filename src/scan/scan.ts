@@ -11,7 +11,7 @@ import { convertPath, toPosixPath } from '../path'
 export type PathObj = ReturnType<typeof convertPath>
 
 export function start_scan(options: GraphOptions, filters: ScanFilters, g: Graph, g_folders: Graph) {
-    const isGlob = options.start.includes("*");
+    const isGlob = options.start.includes('*')
     if (isGlob || lstatSync(options.start).isDirectory()) {
         let files = getSrcFiles(options.start, isGlob)
         for (const file of files) {
@@ -31,7 +31,7 @@ function checkFile(
     g: Graph,
     g_folders: Graph,
     level: number,
-    cache: IFileCache,
+    cache: IFileCache
 ) {
     for (const filter of filters.node_filters) {
         if (isFilteredByCond(filter, fileName.normalized_path, options)) return
@@ -83,17 +83,18 @@ function checkFile(
             nextLevel.push(importFile)
         }
         let edge = g.add_edge({
-            node1: { path: relative(options.base_path || "", fileName.normalized_path), layer: info.layer },
-            node2: { path: relative(options.base_path || "", importFile.normalized_path), layer: importFileInfo.layer },
+            node1: { path: relative(options.base_path || '', fileName.normalized_path), layer: info.layer },
+            node2: { path: relative(options.base_path || '', importFile.normalized_path), layer: importFileInfo.layer },
         })
         if (level === 0) {
             g.start_nodes.add(edge.node1)
         }
-        let folder1 = dirname(relative(options.base_path || "", fileName.orig_path))
-        let folder2 = dirname(relative(options.base_path || "", importFile.orig_path))
+        let folder1 = dirname(relative(options.base_path || '', fileName.orig_path))
+        let folder2 = dirname(relative(options.base_path || '', importFile.orig_path))
 
-        if (folder1 !== folder2) { // TODO allow self pointer of folders?
-            let folder_edge =g_folders.add_edge({
+        if (folder1 !== folder2) {
+            // TODO allow self pointer of folders?
+            let folder_edge = g_folders.add_edge({
                 node1: { path: toPosixPath(folder1), layer: info.layer },
                 node2: { path: toPosixPath(folder2), layer: importFileInfo.layer },
             })
@@ -136,15 +137,15 @@ function getInfo(fileName: string): { layer: number; area: string } {
 }
 
 export function getSrcFiles(srcRoot: string, isDir: boolean) {
-    const files = getAllSrcFiles(srcRoot, isDir);
+    const files = getAllSrcFiles(srcRoot, isDir)
     return files.filter((file) => !file.endsWith('.d.ts'))
 }
 
-/// if it's an directory convert to a glob which grabs all ts and tsx files 
+/// if it's an directory convert to a glob which grabs all ts and tsx files
 export function getAllSrcFiles(srcRoot: string, isGlob: boolean) {
-    if(isGlob){
+    if (isGlob) {
         return glob.sync(`${srcRoot}`)
-    }else{
+    } else {
         return [...glob.sync(`${srcRoot}/**/*.ts`), ...glob.sync(`${srcRoot}/**/*.tsx`)]
     }
 }

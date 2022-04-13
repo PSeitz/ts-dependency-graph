@@ -1,4 +1,4 @@
-import path from "path"
+import path from 'path'
 
 export interface IEdge {
     node1: INode
@@ -37,7 +37,13 @@ export class Graph {
     // get_nodes() {
     //     return this.nodes;
     // }
-    walk(start_node: INode, cb: (edge: IEdge, path: IEdge[]) => boolean, path?: IEdge[], visited_edges?: Set<IEdge>, visited_nodes?: Set<INode>) {
+    walk(
+        start_node: INode,
+        cb: (edge: IEdge, path: IEdge[]) => boolean,
+        path?: IEdge[],
+        visited_edges?: Set<IEdge>,
+        visited_nodes?: Set<INode>
+    ) {
         visited_edges = visited_edges || new Set()
         visited_nodes = visited_nodes || new Set()
         path = path || []
@@ -84,32 +90,32 @@ export class Graph {
     to_dot(root_node?: string, graph_folder?: boolean) {
         let relcnt = 1
 
-        function colorToNode(color?:string){
-            if(!color) return
+        function colorToNode(color?: string) {
+            if (!color) return
             return `, fillcolor=${color} style=filled `
         }
 
-        let paths = this.nodes.map(n => n.path.split("/"))
-        paths.sort();
+        let paths = this.nodes.map((n) => n.path.split('/'))
+        paths.sort()
 
-        let folder_subgraphs = ""
-        if (graph_folder){
-            let tree = get_folder_as_tree(this.nodes);
-            folder_subgraphs = tree_to_subgraph(tree, {cluster_number: 1}, "")
+        let folder_subgraphs = ''
+        if (graph_folder) {
+            let tree = get_folder_as_tree(this.nodes)
+            folder_subgraphs = tree_to_subgraph(tree, { cluster_number: 1 }, '')
         }
 
         const nodes = this.nodes
             .map((n) => {
-                if(n.path === root_node && !n.color) n.color = "orange";
-                if(n.hotspot_pos && !n.color) n.color = "green";
-                let fillcolor = colorToNode(n.color) ?? ""
+                if (n.path === root_node && !n.color) n.color = 'orange'
+                if (n.hotspot_pos && !n.color) n.color = 'green'
+                let fillcolor = colorToNode(n.color) ?? ''
 
                 // if(n.path !== root_node && n.layer){
                 //     color = `, color="#${n.layer.toString(16)}0000"`;
                 // }
-                let label = n.path;
-                if(graph_folder){
-                    let path_components = n.path.split("/")
+                let label = n.path
+                if (graph_folder) {
+                    let path_components = n.path.split('/')
                     label = path_components[path_components.length - 1]
                 }
 
@@ -146,8 +152,6 @@ export class Graph {
         const directed_edges = this.edges
         const graph1 = add_edges_to_dot(directed_edges, true, this.color_edges)
 
-        
-
         return `digraph graphname
 {
     ${nodes}
@@ -167,70 +171,62 @@ ${folder_subgraphs}
     }
 }
 
-
-
 export interface IPathTree {
-    sub_folders: {[key: string]: IPathTree }
+    sub_folders: { [key: string]: IPathTree }
     files_in_folder: string[]
 }
 
-
-function get_folder_as_tree(nodes: INode[]): IPathTree  {
-
+function get_folder_as_tree(nodes: INode[]): IPathTree {
     let root = {
-        sub_folders: { },
-        files_in_folder: []
+        sub_folders: {},
+        files_in_folder: [],
     }
 
-    let paths = nodes.map(n => [n.path.split("/"), n.path] as const)
-    paths.sort();
+    let paths = nodes.map((n) => [n.path.split('/'), n.path] as const)
+    paths.sort()
     for (let el of paths) {
         let path = el[0]
         let full_path = el[1]
         put_folder_in_tree(path, full_path, root)
     }
     return root
-
 }
 
-function tree_to_subgraph(tree: IPathTree, number: {cluster_number: number}, intendation: string): string {
+function tree_to_subgraph(tree: IPathTree, number: { cluster_number: number }, intendation: string): string {
+    intendation = intendation + '    '
+    return Object.keys(tree.sub_folders)
+        .map((folder_name) => {
+            let folder = tree.sub_folders[folder_name]
 
-    intendation = intendation + "    ";
-    return Object.keys(tree.sub_folders).map(folder_name => {
-        let folder = tree.sub_folders[folder_name];
+            let files = folder.files_in_folder.map((file) => `\n        ${intendation}"${file}"`)
 
-        let files = folder.files_in_folder.map(file => `\n        ${intendation}"${file}"`)
+            let current_number = number.cluster_number
+            number.cluster_number = number.cluster_number + 1
+            let sub_cluster = tree_to_subgraph(folder, number, intendation)
 
-        let current_number = number.cluster_number;
-        number.cluster_number = number.cluster_number + 1;
-        let sub_cluster = tree_to_subgraph(folder, number, intendation)
-
-        return `
+            return `
     ${intendation}subgraph cluster_${current_number}{
         ${intendation}label = "${folder_name}";
         ${files}
         ${sub_cluster}
     ${intendation}}
 `
-
-    }).join("\n")
-
-
+        })
+        .join('\n')
 }
 
 // full_path acts as an identifier to the node
-function put_folder_in_tree(paths: string[], full_path:string, tree: IPathTree) {
-    if (paths.length == 1){
-        tree.files_in_folder = tree.files_in_folder || [];
+function put_folder_in_tree(paths: string[], full_path: string, tree: IPathTree) {
+    if (paths.length == 1) {
+        tree.files_in_folder = tree.files_in_folder || []
         tree.files_in_folder.push(full_path)
         return
     }
     let next = paths.shift()!
     tree.sub_folders[next] = tree.sub_folders[next] || {
         files_in_folder: [],
-        sub_folders: {}
+        sub_folders: {},
     }
 
     put_folder_in_tree(paths, full_path, tree.sub_folders[next])
-
 }

@@ -25,8 +25,8 @@ export function post_process_graph(options: GraphOptions, g: Graph) {
         const keepNodes = new Set<INode>()
         // Color target node
         for (const node of g.nodes) {
-            if(node.path.includes(path_to)){
-                node.color = "red";
+            if (node.path.includes(path_to)) {
+                node.color = 'red'
             }
         }
 
@@ -44,29 +44,29 @@ export function post_process_graph(options: GraphOptions, g: Graph) {
                 if (path.length >= (options.max_depth || 1000)) {
                     return false
                 }
-    
+
                 const connectsToTarget = path.some((edge) => edge.node2.path.includes(path_to))
                 if (connectsToTarget) {
                     allPaths.push(path.slice(0))
                 }
                 return true
             })
-    
+
             let shortestPathLen = allPaths.reduce((len, el1) => Math.min(el1.length, len), 10000)
             // let shortestPath = allPaths.find((el) => shortestPathLen == el.length)!
             let shortestPaths = allPaths.filter((el) => shortestPathLen == el.length)!
-            
+
             for (const path of shortestPaths) {
                 const randomPathColor = getRandomColor()
                 for (const edge of path) {
-                    edge.color = randomPathColor;
+                    edge.color = randomPathColor
                     nodes.add(edge.node1)
                     nodes.add(edge.node2)
                     edges.add(edge)
                 }
             }
         }
-        
+
         // g.nodes = g.nodes.filter(node => keepNodes.has(node))
         // console.log("MIAU")
         // console.log(JSON.stringify(allPaths))

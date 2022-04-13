@@ -13,7 +13,11 @@ const argv = yargs
             default: true,
             describe: 'use a random color to color the edges, group by node.',
         },
-        start: { type: 'string', describe: 'the starting file, for the analysis. can also be a folder or a glob for multiple starting files.' },
+        start: {
+            type: 'string',
+            describe:
+                'the starting file, for the analysis. can also be a folder or a glob for multiple starting files.',
+        },
         graph_folder: {
             type: 'boolean',
             default: false,
@@ -57,7 +61,7 @@ const argv = yargs
     })
     .demandOption(['start'], 'Please provide start argument to work with this tool').argv
 
-export type GraphOptions = Partial<typeof argv> & Pick<typeof argv, 'start'| 'graph_folder'>
+export type GraphOptions = Partial<typeof argv> & Pick<typeof argv, 'start' | 'graph_folder'>
 
 function print_debug(g: Graph) {
     if (argv.verbose) {

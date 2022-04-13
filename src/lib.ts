@@ -7,7 +7,7 @@ import { start_scan } from './scan/scan'
 import { get_filters } from './scan/scan_filter'
 
 export function get_dot(g: Graph, options: GraphOptions) {
-    return g.to_dot(relative(options.base_path || "", options.start), options.graph_folder)
+    return g.to_dot(relative(options.base_path || '', options.start), options.graph_folder)
 }
 export function get_graph(options: GraphOptions) {
     const g = new Graph(!!options.color_edges)

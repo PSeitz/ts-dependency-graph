@@ -2,7 +2,6 @@ import { Graph } from '../src/graph'
 import type { GraphOptions } from '../src'
 import { get_dot, get_graph } from '../src/lib'
 describe('graph', function () {
-
     // TODO ADD CIRCULAR DEPENDENCY TEST
 
     it('show_path_to', async function () {
@@ -85,7 +84,7 @@ describe('graph', function () {
             graph_folder: false,
         }
         let dot = get_dot(get_graph(options), options)
-        
+
         expect(dot).toContain('leaf.ts')
         expect(dot).toContain('start.ts')
         expect(dot).toContain('secondmidleaf.ts')
@@ -119,7 +118,7 @@ describe('graph', function () {
     it('scan directory, filter should cover start nodes', async function () {
         const options: GraphOptions = {
             start: 'test_project', // will start scanning at all files in the folder | start.s and mid.ts
-            filter: ["start"],
+            filter: ['start'],
             graph_folder: false,
         }
         let dot = get_dot(get_graph(options), options)
