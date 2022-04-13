@@ -9,7 +9,7 @@ import { isDefined } from '../utils'
 export const checkedFiles = new Set()
 export const ignoredFiles = new Set<string>()
 
-export type IFileCache = { [index: string]: PathObj[] };
+export type IFileCache = { [index: string]: PathObj[] }
 
 export function getCachedImportsForFile(file: string, options: DependencyOptions, cache: IFileCache) {
     if (!cache[file]) {
@@ -38,6 +38,12 @@ function getImportsForFile(file: string, options: DependencyOptions) {
             const yo = join(fileName, 'index.ts').normalize()
             if (existsSync(yo)) {
                 return yo
+            }
+            if (fileName.endsWith('.js')) {
+                const tsFromJs = fileName.replace(/[.]js$/, '.ts')
+                if (existsSync(tsFromJs)) {
+                    return tsFromJs
+                }
             }
             ignoredFiles.add(fileName)
             return undefined

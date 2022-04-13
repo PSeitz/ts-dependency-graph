@@ -88,21 +88,23 @@ describe('graph', function () {
             start: 'test_project/**/*.ts',
         }
         let dot = get_dot(get_graph(options), options)
-        
+
         expect(dot).toContain('leaf.ts')
         expect(dot).toContain('start.ts')
         expect(dot).toContain('secondmidleaf.ts')
         expect(dot).toContain('mid.ts')
     })
-    it('start at folder level with glob, should have as start_files', async function () {
+    it('start at folder level with glob, should have start_files', async function () {
         const options: DependencyOptions = {
             start: 'test_project/*.ts',
         }
-        let graph = get_graph(options);
-        
-        expect([...graph.start_nodes]).toHaveLength(2) // glob should get mid and start as start_nodes
-        expect([...graph.start_nodes].map(el => el.path)).toContain("test_project/start.ts")
-        expect([...graph.start_nodes].map(el => el.path)).toContain("test_project/mid.ts")
+        let graph = get_graph(options)
+
+        // glob should get mid, start and importasjs  as start_nodes
+        expect([...graph.start_nodes]).toHaveLength(3)
+        expect([...graph.start_nodes].map((el) => el.path)).toContain('test_project/start.ts')
+        expect([...graph.start_nodes].map((el) => el.path)).toContain('test_project/mid.ts')
+        expect([...graph.start_nodes].map((el) => el.path)).toContain('test_project/importasjs.ts')
     })
     it('scan directory, filter should cover start nodes', async function () {
         const options: DependencyOptions = {
@@ -110,11 +112,18 @@ describe('graph', function () {
             filter: ["start"]
         }
         let dot = get_dot(get_graph(options), options)
-        
+
         expect(dot).toContain('leaf.ts')
         expect(dot).not.toContain('start.ts')
         expect(dot).not.toContain('secondmidleaf.ts') // is only reachable via start.ts
         expect(dot).toContain('mid.ts')
     })
+    it('should import .js as .ts', async function () {
+        const options: DependencyOptions = {
+            start: 'test_project/importasjs.ts',
+        }
+        let dot = get_dot(get_graph(options), options)
 
+        expect(dot).toContain('leaf.ts')
+    })
 })
