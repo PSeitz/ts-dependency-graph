@@ -1,6 +1,6 @@
 import { readFileSync, existsSync, lstatSync } from 'fs'
 import { join, dirname, relative } from 'path'
-import { DependencyOptions } from '..'
+import { GraphOptions } from '..'
 import glob from 'glob'
 import { promisify } from 'util'
 import { ScanFilters, isFilteredByCond } from './scan_filter'
@@ -10,7 +10,7 @@ import { convertPath, toPosixPath } from '../path'
 
 export type PathObj = ReturnType<typeof convertPath>
 
-export function start_scan(options: DependencyOptions, filters: ScanFilters, g: Graph, g_folders: Graph) {
+export function start_scan(options: GraphOptions, filters: ScanFilters, g: Graph, g_folders: Graph) {
     const isGlob = options.start.includes("*");
     if (isGlob || lstatSync(options.start).isDirectory()) {
         let files = getSrcFiles(options.start, isGlob)
@@ -26,7 +26,7 @@ export function start_scan(options: DependencyOptions, filters: ScanFilters, g: 
 
 function checkFile(
     fileName: PathObj,
-    options: DependencyOptions,
+    options: GraphOptions,
     filters: ScanFilters,
     g: Graph,
     g_folders: Graph,

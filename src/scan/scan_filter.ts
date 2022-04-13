@@ -1,11 +1,11 @@
-import { DependencyOptions } from '..'
+import { GraphOptions } from '..'
 
 export const negation = 'NOT '
 
 export type ScanFilter = ReturnType<typeof get_filter>
 export type ScanFilters = ReturnType<typeof get_filters>
 
-export function get_filters(options: DependencyOptions) {
+export function get_filters(options: GraphOptions) {
     const node_filters = (options.filter || []).map(get_filter)
 
     const edge_filters = (options.filter_edges || []).map((filter) => {
@@ -39,7 +39,7 @@ function get_filter(filter: string) {
     }
 }
 
-export function isFilteredByCond(filter: ScanFilter, check: string, options: DependencyOptions) {
+export function isFilteredByCond(filter: ScanFilter, check: string, options: GraphOptions) {
     const val = filter.is_negated ? !check.includes(filter.filter) : check.includes(filter.filter)
     if (options.verbose_filter) {
         console.log(`isFilteredByCond ${check} ${filter.is_negated ? 'NOT ' : ''}${filter.filter}: ${val}`)

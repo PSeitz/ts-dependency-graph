@@ -14,6 +14,12 @@ const argv = yargs
             describe: 'use a random color to color the edges, group by node.',
         },
         start: { type: 'string', describe: 'the starting file, for the analysis. can also be a folder or a glob for multiple starting files.' },
+        graph_folder: {
+            type: 'boolean',
+            default: false,
+            describe: 'groups files in their folder in the graph',
+            alias: 'graphfolders',
+        },
         aggregate_by_folder: {
             type: 'boolean',
             default: false,
@@ -28,7 +34,7 @@ const argv = yargs
         },
         filter_edges: {
             type: 'array',
-            describe: `removes edges containing the provided strings, the format is start_file=>target_file. The edges containing start_file AND target_file are removed. Start and target can be negated with '${negation}' in front . (Currently) This is not just a postprocess on the graph. The edges won't be followed. Note: put in quotes.`,
+            describe: `Experimental. removes edges containing the provided strings, the format is start_file=>target_file. The edges containing start_file AND target_file are removed. Start and target can be negated with '${negation}' in front . (Currently) This is not just a postprocess on the graph. The edges won't be followed. Note: put in quotes.`,
             default: [] as string[],
         },
         verbose: { type: 'boolean', default: false, describe: 'prints information about ignored files', alias: 'v' },
@@ -51,7 +57,7 @@ const argv = yargs
     })
     .demandOption(['start'], 'Please provide start argument to work with this tool').argv
 
-export type DependencyOptions = Partial<typeof argv> & Pick<typeof argv, 'start'>
+export type GraphOptions = Partial<typeof argv> & Pick<typeof argv, 'start'| 'graph_folder'>
 
 function print_debug(g: Graph) {
     if (argv.verbose) {

@@ -1,4 +1,4 @@
-import { DependencyOptions } from '.'
+import { GraphOptions } from '.'
 import { getRandomColor, Graph, IEdge, INode } from './graph'
 
 function calculate_hotspots(g: Graph, num_hotspots: number) {
@@ -14,7 +14,7 @@ function calculate_hotspots(g: Graph, num_hotspots: number) {
     }
 }
 
-export function post_process_graph(options: DependencyOptions, g: Graph) {
+export function post_process_graph(options: GraphOptions, g: Graph) {
     if (options.hotspots) {
         calculate_hotspots(g, Math.min(5, g.nodes.length / 2))
     }

@@ -1,7 +1,7 @@
 import { readFileSync, existsSync } from 'fs'
 import { join, dirname } from 'path'
 import ts, { FileReference } from 'typescript'
-import { DependencyOptions } from '..'
+import { GraphOptions } from '..'
 import { convertPath } from '../path'
 import { PathObj } from './scan'
 import { isDefined } from '../utils'
@@ -11,14 +11,14 @@ export const ignoredFiles = new Set<string>()
 
 export type IFileCache = { [index: string]: PathObj[] }
 
-export function getCachedImportsForFile(file: string, options: DependencyOptions, cache: IFileCache) {
+export function getCachedImportsForFile(file: string, options: GraphOptions, cache: IFileCache) {
     if (!cache[file]) {
         cache[file] = getImportsForFile(file, options)
     }
     return cache[file]
 }
 
-function getImportsForFile(file: string, options: DependencyOptions) {
+function getImportsForFile(file: string, options: GraphOptions) {
     const fileInfo = ts.preProcessFile(readFileSync(file).toString())
     if (options.verbose)
         console.log('getImportsForFile ' + file + ': ' + fileInfo.importedFiles.map((el) => el.fileName).join(', '))

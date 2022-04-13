@@ -1,15 +1,16 @@
 import { Graph } from '../src/graph'
-import type { DependencyOptions } from '../src'
+import type { GraphOptions } from '../src'
 import { get_dot, get_graph } from '../src/lib'
 describe('graph', function () {
 
     // TODO ADD CIRCULAR DEPENDENCY TEST
 
     it('show_path_to', async function () {
-        const options: DependencyOptions = {
+        const options: GraphOptions = {
             start: 'test_project/start.ts',
             base_path: '',
             show_path_to: 'test_project/leafs/leaf.ts',
+            graph_folder: false,
         }
         const g = get_graph(options)
         let dot = get_dot(g, options)
@@ -18,17 +19,19 @@ describe('graph', function () {
         expect(dot).toContain('leaf')
     })
     it('base_path', async function () {
-        const options: DependencyOptions = {
+        const options: GraphOptions = {
             start: 'test_project/start.ts',
             base_path: 'test_project',
+            graph_folder: false,
         }
         let dot = get_dot(get_graph(options), options)
         expect(dot).not.toContain('test_project')
     })
     it('aggregate_by_folder', async function () {
-        const options: DependencyOptions = {
+        const options: GraphOptions = {
             start: 'test_project/start.ts',
             aggregate_by_folder: true,
+            graph_folder: false,
         }
         const g = get_graph(options)
         let dot = get_dot(g, options)
@@ -36,15 +39,17 @@ describe('graph', function () {
         expect(dot).toContain('"test_project" -> "test_project/leafs"')
     })
     it('max_depth', async function () {
-        const options1: DependencyOptions = {
+        const options1: GraphOptions = {
             start: 'test_project/start.ts',
             base_path: 'test_project',
             max_depth: 1,
+            graph_folder: false,
         }
-        const options2: DependencyOptions = {
+        const options2: GraphOptions = {
             start: 'test_project/start.ts',
             base_path: 'test_project',
             max_depth: 2,
+            graph_folder: false,
         }
         let dot_depth_1 = get_dot(get_graph(options1), options1)
         let dot_depth_2 = get_dot(get_graph(options2), options2)
@@ -53,28 +58,31 @@ describe('graph', function () {
         expect(dot_depth_2).toContain('"mid.ts" -> "leafs/leaf.ts"')
     })
     it('filter_edge verbose', async function () {
-        const options1: DependencyOptions = {
+        const options1: GraphOptions = {
             start: 'test_project/start.ts',
             filter_edges: ['mid=>leaf'],
             verbose_filter: true,
-            verbose: true
+            verbose: true,
+            graph_folder: false,
         }
         let dot_depth_1 = get_dot(get_graph(options1), options1)
 
         expect(dot_depth_1).not.toContain('"test_project/mid.ts" -> "test_project/leafs/leaf.ts"')
     })
     it('hotspots, color edges', async function () {
-        const options: DependencyOptions = {
+        const options: GraphOptions = {
             start: 'test_project/start.ts',
             color_edges: true,
             hotspots: true,
+            graph_folder: false,
         }
         let dot = get_dot(get_graph(options), options)
         expect(dot).toContain('color')
     })
     it('start at folder level should contain all files', async function () {
-        const options: DependencyOptions = {
+        const options: GraphOptions = {
             start: 'test_project',
+            graph_folder: false,
         }
         let dot = get_dot(get_graph(options), options)
         
@@ -84,8 +92,9 @@ describe('graph', function () {
         expect(dot).toContain('mid.ts')
     })
     it('start at folder level with glob, should contain all files', async function () {
-        const options: DependencyOptions = {
+        const options: GraphOptions = {
             start: 'test_project/**/*.ts',
+            graph_folder: false,
         }
         let dot = get_dot(get_graph(options), options)
 
@@ -95,8 +104,9 @@ describe('graph', function () {
         expect(dot).toContain('mid.ts')
     })
     it('start at folder level with glob, should have start_files', async function () {
-        const options: DependencyOptions = {
+        const options: GraphOptions = {
             start: 'test_project/*.ts',
+            graph_folder: false,
         }
         let graph = get_graph(options)
 
@@ -107,9 +117,10 @@ describe('graph', function () {
         expect([...graph.start_nodes].map((el) => el.path)).toContain('test_project/importasjs.ts')
     })
     it('scan directory, filter should cover start nodes', async function () {
-        const options: DependencyOptions = {
+        const options: GraphOptions = {
             start: 'test_project', // will start scanning at all files in the folder | start.s and mid.ts
-            filter: ["start"]
+            filter: ["start"],
+            graph_folder: false,
         }
         let dot = get_dot(get_graph(options), options)
 
@@ -119,11 +130,27 @@ describe('graph', function () {
         expect(dot).toContain('mid.ts')
     })
     it('should import .js as .ts', async function () {
-        const options: DependencyOptions = {
+        const options: GraphOptions = {
             start: 'test_project/importasjs.ts',
+            graph_folder: false,
         }
         let dot = get_dot(get_graph(options), options)
 
         expect(dot).toContain('leaf.ts')
+    })
+
+    it('should put sub_cluster with folder name with graph_folder option', async function () {
+        const options: GraphOptions = {
+            start: 'test_project',
+            graph_folder: true,
+        }
+        let dot = get_dot(get_graph(options), options)
+
+        // each folder own cluster
+        expect(dot).toContain('subgraph cluster_1{')
+        expect(dot).toContain('subgraph cluster_2{')
+        // folder names
+        expect(dot).toContain('label = "test_project"')
+        expect(dot).toContain('label = "leafs"')
     })
 })
