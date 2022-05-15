@@ -3,7 +3,8 @@
 
 # TS-Dependency-Graph
 
-Prints a dependency graph in dot format for your typescript project. Supported files are .ts and .tsx
+Prints a dependency graph in dot format for your typescript or react project. Supported files are .ts and .tsx.
+Supports tsconfig path mappings since v1.4.0.
 
 ### Usage
 
@@ -56,7 +57,7 @@ Options:
 
 `ts_dependency_graph --start src/index.ts`
 
-Use output with https://dreampuf.github.io/GraphvizOnline/, http://www.webgraphviz.com/, or by piping result to dot tool
+Use output with https://stamm-wilbrandt.de/GraphvizFiddle/#, https://dreampuf.github.io/GraphvizOnline/, http://www.webgraphviz.com/, or by piping result to dot tool
 
 ![graph_example](https://raw.githubusercontent.com/PSeitz/ts-dependency-graph/master/example.png)
 

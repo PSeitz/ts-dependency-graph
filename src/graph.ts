@@ -197,8 +197,7 @@ function tree_to_subgraph(tree: IPathTree, number: { cluster_number: number }, i
     return Object.keys(tree.sub_folders)
         .map((folder_name) => {
             let folder = tree.sub_folders[folder_name]
-
-            let files = folder.files_in_folder.map((file) => `\n        ${intendation}"${file}"`)
+            let files = folder.files_in_folder.map((file) => `\n        ${intendation}"${file}";`).join("")
 
             let current_number = number.cluster_number
             number.cluster_number = number.cluster_number + 1
