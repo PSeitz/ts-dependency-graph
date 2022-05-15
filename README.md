@@ -68,7 +68,7 @@ ts_dependency_graph --start src/index.ts --graph_folder | dot -T svg > dependenc
 
 #### Real Worl Example
 
-Usage on (quickwit-ui)[https://github.com/quickwit-oss/quickwit/tree/93097687060b89c2fa5e1668f158036574355938/quickwit-ui]
+Usage on [quickwit-ui](https://github.com/quickwit-oss/quickwit/tree/93097687060b89c2fa5e1668f158036574355938/quickwit-ui)
 
 ```
 ts_dependency_graph --start src/index.tsx --graph_folder | dot -T svg > dependencygraph.svg
