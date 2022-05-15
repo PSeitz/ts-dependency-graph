@@ -64,7 +64,7 @@ Use output with https://stamm-wilbrandt.de/GraphvizFiddle/#, https://dreampuf.gi
 ts_dependency_graph --start src/index.ts --graph_folder | dot -T svg > dependencygraph.svg
 ```
 
-![graph_example](https://raw.githubusercontent.com/PSeitz/ts-dependency-graph/master/self_example.png)
+![graph_example](https://raw.githubusercontent.com/PSeitz/ts-dependency-graph/master/self_example.svg)
 
 
 #### Real Worl Example
