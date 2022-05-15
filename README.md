@@ -59,11 +59,12 @@ Options:
 
 Use output with https://stamm-wilbrandt.de/GraphvizFiddle/#, https://dreampuf.github.io/GraphvizOnline/, http://www.webgraphviz.com/, or by piping result to dot tool
 
-![graph_example](https://raw.githubusercontent.com/PSeitz/ts-dependency-graph/master/example.png)
 
 ```
 ts_dependency_graph --start src/index.ts --graph_folder | dot -T svg > dependencygraph.svg
 ```
+
+![graph_example](https://raw.githubusercontent.com/PSeitz/ts-dependency-graph/master/self_example.png)
 
 
 #### Real Worl Example
