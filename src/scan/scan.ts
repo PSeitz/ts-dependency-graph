@@ -62,6 +62,7 @@ function checkFile(
         if (isFilteredByCond(filter, fileName.normalized_path, options)) return
     }
     const imports = getCachedImportsForFile(fileName.orig_path, options, cache, path_mapping)
+
     let info = getInfo(fileName.orig_path)
     const nextLevel: PathObj[] = []
     imports.forEach((importFile) => {

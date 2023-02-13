@@ -94,7 +94,7 @@ function applyPathMapping(fileName: string, path_mapping: PathMapping) {
             } else if (isPatternMatch(mapping.from, fileName)) {
                 let matchedStar = matchedText(mapping.from, fileName)
                 const path = mapping.to.replace('*', matchedStar)
-                let endPath = join(path, path_mapping.relBaseUrl)
+                let endPath = join(path_mapping.relBaseUrl, path)
                 paths_to_check.push('./' + endPath)
             }
         }
