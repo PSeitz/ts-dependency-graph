@@ -59,13 +59,11 @@ Options:
 
 Use output with https://stamm-wilbrandt.de/GraphvizFiddle/#, https://dreampuf.github.io/GraphvizOnline/, http://www.webgraphviz.com/, or by piping result to dot tool
 
-
 ```
 ts_dependency_graph --start src/index.ts --graph_folder | dot -T svg > dependencygraph.svg
 ```
 
 ![graph_example](https://raw.githubusercontent.com/PSeitz/ts-dependency-graph/master/self_example.svg)
-
 
 #### Real World Example
 
@@ -80,5 +78,3 @@ ts_dependency_graph --start src/index.tsx --graph_folder | dot -T svg > dependen
 #### Use from Github Repo
 
 `npx ts-node src/index.ts --help`
-
-

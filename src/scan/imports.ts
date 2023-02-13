@@ -11,7 +11,12 @@ export const ignoredFiles = new Set<string>()
 
 export type IFileCache = { [index: string]: PathObj[] }
 
-export function getCachedImportsForFile(file: string, options: GraphOptions, cache: IFileCache, path_mapping: PathMapping) {
+export function getCachedImportsForFile(
+    file: string,
+    options: GraphOptions,
+    cache: IFileCache,
+    path_mapping: PathMapping
+) {
     if (!cache[file]) {
         cache[file] = getImportsForFile(file, options, path_mapping)
     }
@@ -19,89 +24,84 @@ export function getCachedImportsForFile(file: string, options: GraphOptions, cac
 }
 
 export interface Pattern {
-    prefix: string;
-    suffix: string;
+    prefix: string
+    suffix: string
 }
 export function startsWith(str: string, prefix: string): boolean {
-    return str.lastIndexOf(prefix, 0) === 0;
+    return str.lastIndexOf(prefix, 0) === 0
 }
 export function endsWith(str: string, suffix: string): boolean {
-    const expectedPos = str.length - suffix.length;
-    return expectedPos >= 0 && str.indexOf(suffix, expectedPos) === expectedPos;
+    const expectedPos = str.length - suffix.length
+    return expectedPos >= 0 && str.indexOf(suffix, expectedPos) === expectedPos
 }
 
 function isPatternMatch({ prefix, suffix }: Pattern, candidate: string) {
-    return candidate.length >= prefix.length + suffix.length &&
+    return (
+        candidate.length >= prefix.length + suffix.length &&
         startsWith(candidate, prefix) &&
-        endsWith(candidate, suffix);
+        endsWith(candidate, suffix)
+    )
 }
 
 export function tryParsePattern(pattern: string): string | Pattern | undefined {
-    const indexOfStar = pattern.indexOf("*");
+    const indexOfStar = pattern.indexOf('*')
     if (indexOfStar === -1) {
-        return pattern;
+        return pattern
     }
-    return pattern.indexOf("*", indexOfStar + 1) !== -1
+    return pattern.indexOf('*', indexOfStar + 1) !== -1
         ? undefined
         : {
-            prefix: pattern.substr(0, indexOfStar),
-            suffix: pattern.substr(indexOfStar + 1)
-        };
+              prefix: pattern.substr(0, indexOfStar),
+              suffix: pattern.substr(indexOfStar + 1),
+          }
 }
-export interface IMapping{
+export interface IMapping {
     from: string | Pattern
     to: string
 }
 export function tryParsePatterns(paths: MapLike<string[]>): IMapping[] {
-
-    let paths_parsed: IMapping[] = [];
+    let paths_parsed: IMapping[] = []
     for (const from in paths) {
-
-        const element = paths[from];
-        let from_pattern = tryParsePattern(from);
-        if (!from_pattern) continue;
+        const element = paths[from]
+        let from_pattern = tryParsePattern(from)
+        if (!from_pattern) continue
         for (const to of element) {
-            paths_parsed.push({from: from_pattern, to: to});
+            paths_parsed.push({ from: from_pattern, to: to })
         }
-
     }
-    return paths_parsed;
-
+    return paths_parsed
 }
 
 /**
-     * Given that candidate matches pattern, returns the text matching the '*'.
-     * E.g.: matchedText(tryParsePattern("foo*baz"), "foobarbaz") === "bar"
-*/
- export function matchedText(pattern: Pattern, candidate: string): string {
-    return candidate.substring(pattern.prefix.length, candidate.length - pattern.suffix.length);
+ * Given that candidate matches pattern, returns the text matching the '*'.
+ * E.g.: matchedText(tryParsePattern("foo*baz"), "foobarbaz") === "bar"
+ */
+export function matchedText(pattern: Pattern, candidate: string): string {
+    return candidate.substring(pattern.prefix.length, candidate.length - pattern.suffix.length)
 }
 
-
 function applyPathMapping(fileName: string, path_mapping: PathMapping) {
-    if (path_mapping.paths && path_mapping.relBaseUrl){
-        let mappings = tryParsePatterns(path_mapping.paths);
-        
+    if (path_mapping.paths && path_mapping.relBaseUrl) {
+        let mappings = tryParsePatterns(path_mapping.paths)
+
         let paths_to_check = []
         for (const mapping of mappings) {
-
-            if (typeof mapping.from === "string"){
-                if (typeof mapping.to !== "string"){
+            if (typeof mapping.from === 'string') {
+                if (typeof mapping.to !== 'string') {
                     throw "type mapping from contains pattern, but to doesn't. how to handle this?"
                 }
                 paths_to_check.push(join(path_mapping.relBaseUrl, mapping.to))
-            }else if (isPatternMatch(mapping.from, fileName)){
+            } else if (isPatternMatch(mapping.from, fileName)) {
                 let matchedStar = matchedText(mapping.from, fileName)
-                const path = mapping.to.replace("*", matchedStar);
-                let endPath = join(path, path_mapping.relBaseUrl);
-                paths_to_check.push("./" + endPath)
+                const path = mapping.to.replace('*', matchedStar)
+                let endPath = join(path, path_mapping.relBaseUrl)
+                paths_to_check.push('./' + endPath)
             }
         }
         return paths_to_check
-    }else{
+    } else {
         return [fileName]
     }
-
 }
 
 function getImportsForFile(file: string, options: GraphOptions, path_mapping: PathMapping) {
@@ -112,7 +112,7 @@ function getImportsForFile(file: string, options: GraphOptions, path_mapping: Pa
         .map((importedFile: FileReference) => importedFile.fileName)
         .flatMap((fileName: string) => {
             // flat map is not ideal here, because we could hit multiple valid imports, and not the first aka best one
-            return applyPathMapping(fileName, path_mapping) 
+            return applyPathMapping(fileName, path_mapping)
         })
         .filter((x: string) => x.startsWith('.')) // only relative paths allowed
         .flatMap((fileName: string) => {

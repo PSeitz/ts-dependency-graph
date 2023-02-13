@@ -12,28 +12,27 @@ import ts, { CompilerOptions, CompilerOptionsValue } from 'typescript'
 export type PathObj = ReturnType<typeof convertPath>
 
 export type PathMapping = {
-    relBaseUrl: string | undefined;
-    baseUrl: string | undefined;
-    paths: ts.MapLike<string[]> | undefined;
-};
+    relBaseUrl: string | undefined
+    baseUrl: string | undefined
+    paths: ts.MapLike<string[]> | undefined
+}
 
 export function start_scan(options: GraphOptions, filters: ScanFilters, g: Graph, g_folders: Graph) {
-    
-    let currentDirectory = process.cwd();
+    let currentDirectory = process.cwd()
     const configFile = ts.findConfigFile(currentDirectory, ts.sys.fileExists, 'tsconfig.json')
-	if (!configFile) throw Error('tsconfig.json not found')
-	const { config } = ts.readConfigFile(configFile, ts.sys.readFile)
+    if (!configFile) throw Error('tsconfig.json not found')
+    const { config } = ts.readConfigFile(configFile, ts.sys.readFile)
     path.parse(configFile)
-    
-    let rel_tsconfig_path = path.relative(currentDirectory, configFile );
 
-    let rel_tsconfig_dir = path.parse(rel_tsconfig_path).dir;
+    let rel_tsconfig_path = path.relative(currentDirectory, configFile)
 
-    let compilerOptions: CompilerOptions = config.compilerOptions;
+    let rel_tsconfig_dir = path.parse(rel_tsconfig_path).dir
+
+    let compilerOptions: CompilerOptions = config.compilerOptions
     let mapping: PathMapping = {
         relBaseUrl: compilerOptions.baseUrl && path.join(rel_tsconfig_dir, compilerOptions.baseUrl),
         baseUrl: compilerOptions.baseUrl,
-        paths: compilerOptions.paths
+        paths: compilerOptions.paths,
     }
 
     const isGlob = options.start.includes('*')
