@@ -4,7 +4,7 @@
 # TS-Dependency-Graph
 
 Prints a dependency graph in dot format for your typescript or react project. Supported files are .ts and .tsx.
-Supports tsconfig path mappings since v1.4.0.
+Supports tsconfig path mappings since v1.4.3.
 
 ### Usage
 
