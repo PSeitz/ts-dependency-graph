@@ -1,13 +1,13 @@
+import process from 'process'
 import { readFileSync, existsSync, lstatSync } from 'fs'
-import path, { join, dirname, relative } from 'path'
+import { join, dirname, relative } from 'path'
 import { GraphOptions } from '..'
 import glob from 'glob'
-import { promisify } from 'util'
 import { ScanFilters, isFilteredByCond } from './scan_filter'
 import { Graph } from '../graph'
 import { checkedFiles, getCachedImportsForFile, IFileCache } from './imports'
 import { convertPath, toPosixPath } from '../path'
-import ts, { CompilerOptions, CompilerOptionsValue } from 'typescript'
+import ts from 'typescript'
 
 export type PathObj = ReturnType<typeof convertPath>
 
@@ -18,50 +18,48 @@ export type PathMapping = {
 }
 
 export function start_scan(options: GraphOptions, filters: ScanFilters, g: Graph, g_folders: Graph) {
-    let currentDirectory = process.cwd()
-    const configFile = ts.findConfigFile(currentDirectory, ts.sys.fileExists, 'tsconfig.json')
-    if (!configFile) throw Error('tsconfig.json not found')
-    const { config } = ts.readConfigFile(configFile, ts.sys.readFile)
-    path.parse(configFile)
+    const tsConfigFilePath = ts.findConfigFile(process.cwd(), ts.sys.fileExists)
+    if (!tsConfigFilePath) throw Error('tsconfig.json not found')
+    const tsConfigFile = ts.readConfigFile(tsConfigFilePath, ts.sys.readFile)
 
-    let rel_tsconfig_path = path.relative(currentDirectory, configFile)
+    const tsConfigObject = ts.parseJsonConfigFileContent(
+      ts.readConfigFile(tsConfigFilePath, ts.sys.readFile),
+      ts.sys,
+      ''
+    );
 
-    let rel_tsconfig_dir = path.parse(rel_tsconfig_path).dir
-
-    let compilerOptions: CompilerOptions = config.compilerOptions
-    let mapping: PathMapping = {
-        relBaseUrl: compilerOptions.baseUrl && path.join(rel_tsconfig_dir, compilerOptions.baseUrl),
-        baseUrl: compilerOptions.baseUrl,
-        paths: compilerOptions.paths,
-    }
+    const tsOptions = {
+    ...tsConfigObject.options,
+      paths: tsConfigFile.config.compilerOptions.paths
+    };
 
     const isGlob = options.start.includes('*')
     if (isGlob || lstatSync(options.start).isDirectory()) {
         let files = getSrcFiles(options.start, isGlob)
         for (const file of files) {
-            checkFile(convertPath(file), options, filters, g, g_folders, 0, {}, mapping)
+            checkFile(convertPath(file), options, filters, g, g_folders, 0, {}, tsOptions)
         }
     } else {
-        checkFile(convertPath(options.start), options, filters, g, g_folders, 0, {}, mapping)
+        checkFile(convertPath(options.start), options, filters, g, g_folders, 0, {}, tsOptions)
     }
     // post_process_graph()
     // print_result(start_file)
 }
 
 function checkFile(
-    fileName: PathObj,
-    options: GraphOptions,
-    filters: ScanFilters,
-    g: Graph,
-    g_folders: Graph,
-    level: number,
-    cache: IFileCache,
-    path_mapping: PathMapping
+  fileName: PathObj,
+  options: GraphOptions,
+  filters: ScanFilters,
+  g: Graph,
+  g_folders: Graph,
+  level: number,
+  cache: IFileCache,
+  tsOptions:  ts.CompilerOptions
 ) {
     for (const filter of filters.node_filters) {
         if (isFilteredByCond(filter, fileName.normalized_path, options)) return
     }
-    const imports = getCachedImportsForFile(fileName.orig_path, options, cache, path_mapping)
+    const imports = getCachedImportsForFile(fileName.orig_path, options, cache, tsOptions)
 
     let info = getInfo(fileName.orig_path)
     const nextLevel: PathObj[] = []
@@ -71,8 +69,8 @@ function checkFile(
         }
         for (const filter of filters.edge_filters) {
             if (
-                isFilteredByCond(filter.from, fileName.normalized_path, options) &&
-                isFilteredByCond(filter.to, importFile.normalized_path, options)
+              isFilteredByCond(filter.from, fileName.normalized_path, options) &&
+              isFilteredByCond(filter.to, importFile.normalized_path, options)
             ) {
                 if (options.verbose_filter)
                     console.log(
@@ -137,7 +135,7 @@ function checkFile(
         return
     }
     for (const file of nextLevel) {
-        checkFile(file, options, filters, g, g_folders, level + 1, cache, path_mapping)
+        checkFile(file, options, filters, g, g_folders, level + 1, cache, tsOptions)
     }
 }
 
