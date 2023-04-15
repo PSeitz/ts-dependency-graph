@@ -22,16 +22,11 @@ export function start_scan(options: GraphOptions, filters: ScanFilters, g: Graph
     if (!tsConfigFilePath) throw Error('tsconfig.json not found')
     const tsConfigFile = ts.readConfigFile(tsConfigFilePath, ts.sys.readFile)
 
-    const tsConfigObject = ts.parseJsonConfigFileContent(
-      ts.readConfigFile(tsConfigFilePath, ts.sys.readFile),
+    const tsOptions = ts.parseJsonConfigFileContent(
+      tsConfigFile.config,
       ts.sys,
       ''
-    );
-
-    const tsOptions = {
-    ...tsConfigObject.options,
-      paths: tsConfigFile.config.compilerOptions.paths
-    };
+    ).options;
 
     const isGlob = options.start.includes('*')
     if (isGlob || lstatSync(options.start).isDirectory()) {
