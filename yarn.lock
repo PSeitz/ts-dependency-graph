@@ -3555,10 +3555,10 @@
   dependencies:
     "is-typedarray" "^1.0.0"
 
-"typescript@^4.0.3", "typescript@>=2.7", "typescript@>=3.8 <5.0":
-  "integrity" "sha512-tEu6DGxGgRJPb/mVPIZ48e69xCn2yRmCgYmDugAVwmJ6o+0u1RI18eO7E7WBTLYLaEVVOhwQmcdhQHweux/WPg=="
-  "resolved" "https://registry.npmjs.org/typescript/-/typescript-4.0.3.tgz"
-  "version" "4.0.3"
+"typescript@^4.9.5", "typescript@>=2.7", "typescript@>=3.8 <5.0":
+  "integrity" "sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g=="
+  "resolved" "https://registry.npmjs.org/typescript/-/typescript-4.9.5.tgz"
+  "version" "4.9.5"
 
 "union-value@^1.0.0":
   "integrity" "sha512-tJfXmxMeWYnczCVs7XAEvIV7ieppALdyepWMkHkwciRpZraG/xwT+s2JN8+pr1+8jCRf80FFzvr+MpQeeoF4Xg=="
