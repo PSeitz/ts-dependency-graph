@@ -1,11 +1,11 @@
 import type { GraphOptions } from '../src'
 import { get_dot, get_graph } from '../src/lib'
-import process from "process";
+import process from 'process'
 
 describe('graph', function () {
     // TODO ADD CIRCULAR DEPENDENCY TEST
-    const spy = jest.spyOn(process, 'cwd');
-    spy.mockReturnValue('test_project');
+    const spy = jest.spyOn(process, 'cwd')
+    spy.mockReturnValue('test_project')
 
     it('show_path_to', async function () {
         const options: GraphOptions = {
@@ -159,7 +159,7 @@ describe('graph', function () {
     it('should handle compilerOptions paths', async function () {
         const options: GraphOptions = {
             start: 'test_project/src/App.tsx',
-            graph_folder: false
+            graph_folder: false,
         }
         const graph = get_graph(options)
 

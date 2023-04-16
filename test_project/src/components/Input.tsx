@@ -1,9 +1,9 @@
-import React from 'react';
+import React from 'react'
 
-import {helper} from "../helpers";
+import { helper } from '../helpers'
 
 export const Input = () => {
-  helper();
+    helper()
 
-  return <input type='text'/>
+    return <input type="text" />
 }

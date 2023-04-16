@@ -22,11 +22,7 @@ export function start_scan(options: GraphOptions, filters: ScanFilters, g: Graph
     if (!tsConfigFilePath) throw Error('tsconfig.json not found')
     const tsConfigFile = ts.readConfigFile(tsConfigFilePath, ts.sys.readFile)
 
-    const tsOptions = ts.parseJsonConfigFileContent(
-      tsConfigFile.config,
-      ts.sys,
-      ''
-    ).options;
+    const tsOptions = ts.parseJsonConfigFileContent(tsConfigFile.config, ts.sys, '').options
 
     const isGlob = options.start.includes('*')
     if (isGlob || lstatSync(options.start).isDirectory()) {
@@ -42,14 +38,14 @@ export function start_scan(options: GraphOptions, filters: ScanFilters, g: Graph
 }
 
 function checkFile(
-  fileName: PathObj,
-  options: GraphOptions,
-  filters: ScanFilters,
-  g: Graph,
-  g_folders: Graph,
-  level: number,
-  cache: IFileCache,
-  tsOptions:  ts.CompilerOptions
+    fileName: PathObj,
+    options: GraphOptions,
+    filters: ScanFilters,
+    g: Graph,
+    g_folders: Graph,
+    level: number,
+    cache: IFileCache,
+    tsOptions: ts.CompilerOptions
 ) {
     for (const filter of filters.node_filters) {
         if (isFilteredByCond(filter, fileName.normalized_path, options)) return
@@ -64,8 +60,8 @@ function checkFile(
         }
         for (const filter of filters.edge_filters) {
             if (
-              isFilteredByCond(filter.from, fileName.normalized_path, options) &&
-              isFilteredByCond(filter.to, importFile.normalized_path, options)
+                isFilteredByCond(filter.from, fileName.normalized_path, options) &&
+                isFilteredByCond(filter.to, importFile.normalized_path, options)
             ) {
                 if (options.verbose_filter)
                     console.log(
