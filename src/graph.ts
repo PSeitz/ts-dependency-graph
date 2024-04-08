@@ -14,6 +14,16 @@ export interface INode {
     label?: string
 }
 
+function pathToName(path: string) {
+    const pathToNameRegex = /([^\/\\]+)(?=\.\w+$)/;
+    let nameMatch: RegExpMatchArray | null = path.match(pathToNameRegex);
+    let name = nameMatch ? nameMatch[0] : path;
+    if(name =='graph') {// escape reserved word(for mermaid)
+        name = 'graph_xx';
+    }
+    return name;
+}
+
 export function getRandomColor() {
     var letters = '0123456789ABCDEF'
     var color = '#'
@@ -161,17 +171,8 @@ ${folder_subgraphs}
     `
     }
 
-    to_mermaid(root_node?: string) {
+    to_mermaid(root_node?: string, graph_folder?: boolean) {
         const tab = '   '
-        function pathToName(path: string) {
-            const pathToNameRegex = /([^\/\\]+)(?=\.\w+$)/;
-            let nameMatch: RegExpMatchArray | null = path.match(pathToNameRegex);
-            let name = nameMatch ? nameMatch[0] : path;
-            if(name =='graph') {// escape reserved word
-                name = 'graph_xx';
-            }
-            return name;
-        }
         function add_edges_to_dot(edges: IEdge[], directed: boolean, color_edges: boolean) {
             if (edges.length !== 0) {
                 const dirChar = directed ? '' : '<'
@@ -183,7 +184,7 @@ ${folder_subgraphs}
                     })
                     .join(`\n${tab}${tab}${tab}`)
                 
-                return `${tab}class app myClass${relcnt++} \n${tab}${tab}${tab}${edges_str}\n`
+                return `${tab}class app myClass${relcnt++}\n${tab}${tab}${tab}${edges_str}\n`
             }
             return ''
         }
@@ -192,7 +193,11 @@ ${folder_subgraphs}
         let paths = this.nodes.map((n) => n.path.split('/'))
         paths.sort()
 
-        let folder_subgraphs = '' // todo: implement later
+        let folder_subgraphs = ''
+        if (graph_folder) {
+            let tree = get_folder_as_tree(this.nodes)
+            folder_subgraphs = tree_to_subgraph_mermaid(tree, { cluster_number: 1 }, tab)
+        }
         
         const nodes = this.nodes
             .map((n) => {
@@ -205,7 +210,7 @@ ${folder_subgraphs}
         const directed_edges = this.edges
         const graph1 = add_edges_to_dot(directed_edges, true, this.color_edges)
 
-        return `graph TD\n${tab}${nodes}\n${graph1}\n${folder_subgraphs}`
+        return `graph TD\n${tab}${nodes}\n${graph1}\n${folder_subgraphs}\n${folder_subgraphs}`
     }
 
     add_edge(edge: IEdge) {
@@ -257,6 +262,21 @@ function tree_to_subgraph(tree: IPathTree, number: { cluster_number: number }, i
         ${sub_cluster}
     ${intendation}}
 `
+        })
+        .join('\n')
+}
+function tree_to_subgraph_mermaid(tree: IPathTree, number: { cluster_number: number }, intendation: string = '  '): string {
+    const selfIntend = intendation
+    return Object.keys(tree.sub_folders)
+        .map((folder_name) => {
+            let folder = tree.sub_folders[folder_name]
+            let files = folder.files_in_folder.map((file) => `${intendation}${selfIntend}${pathToName(file)}\n`).join('')
+
+            let current_number = number.cluster_number
+            number.cluster_number = number.cluster_number + 1
+            let sub_cluster = tree_to_subgraph_mermaid(folder, number, intendation+selfIntend)
+pathToName
+            return `${intendation}subgraph cluster_${current_number} ${folder_name}\n${files}${sub_cluster}${intendation}end\n`
         })
         .join('\n')
 }

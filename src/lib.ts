@@ -11,7 +11,7 @@ export function get_dot(g: Graph, options: GraphOptions) {
 }
 
 export function get_mermaid(g: Graph, options: GraphOptions) {
-    return g.to_mermaid(relative(options.base_path || '', options.start))
+    return g.to_mermaid(relative(options.base_path || '', options.start), options.graph_folder)
 }
 
 export function get_graph(options: GraphOptions) {
