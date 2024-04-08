@@ -161,6 +161,53 @@ ${folder_subgraphs}
     `
     }
 
+    to_mermaid(root_node?: string) {
+        const tab = '   '
+        function pathToName(path: string) {
+            const pathToNameRegex = /([^\/\\]+)(?=\.\w+$)/;
+            let nameMatch: RegExpMatchArray | null = path.match(pathToNameRegex);
+            let name = nameMatch ? nameMatch[0] : path;
+            if(name =='graph') {// escape reserved word
+                name = 'graph_xx';
+            }
+            return name;
+        }
+        function add_edges_to_dot(edges: IEdge[], directed: boolean, color_edges: boolean) {
+            if (edges.length !== 0) {
+                const dirChar = directed ? '' : '<'
+                const edges_str = edges
+                    .map((e) => {
+                        const name1 = pathToName(e.node1.path)
+                        const name2 = pathToName(e.node2.path)
+                        return `${name1} ${dirChar}--> ${name2}`
+                    })
+                    .join(`\n${tab}${tab}${tab}`)
+                
+                return `${tab}class app myClass${relcnt++} \n${tab}${tab}${tab}${edges_str}\n`
+            }
+            return ''
+        }
+        
+        let relcnt = 1
+        let paths = this.nodes.map((n) => n.path.split('/'))
+        paths.sort()
+
+        let folder_subgraphs = '' // todo: implement later
+        
+        const nodes = this.nodes
+            .map((n) => {
+                const path = n.path
+                const name = pathToName(path)
+                return `${name}[${path}]`
+            })
+            .join(`\n${tab}`)
+
+        const directed_edges = this.edges
+        const graph1 = add_edges_to_dot(directed_edges, true, this.color_edges)
+
+        return `graph TD\n${tab}${nodes}\n${graph1}\n${folder_subgraphs}`
+    }
+
     add_edge(edge: IEdge) {
         edge.node1 = this.add_node(edge.node1)
         edge.node2 = this.add_node(edge.node2)
