@@ -77,11 +77,10 @@ function print_debug(g: Graph) {
 
 let g = get_graph(argv)
 print_debug(g)
-if(argv.mermaid){
+if (argv.mermaid) {
     const mermaid = get_mermaid(g, argv)
     console.log(mermaid)
-}else{
+} else {
     const dot = get_dot(g, argv)
     console.log(dot)
 }
-
