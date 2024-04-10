@@ -3,11 +3,16 @@ import { Graph, INode } from './graph'
 import * as yargs from 'yargs'
 import { ignoredFiles } from './scan/imports'
 import { ScanFilter, get_filters, negation } from './scan/scan_filter'
-import { get_graph, get_dot } from './lib'
+import { get_graph, get_dot, get_mermaid } from './lib'
 
 const argv = yargs
     .options({
         // target: { type: 'string', describe: "the target file, to see which dependencies are depending on the file. This is an inverse of start. choose either" },
+        mermaid: {
+            type: 'boolean',
+            default: false,
+            describe: 'use mermaid markdown as output.',
+        },
         color_edges: {
             type: 'boolean',
             default: true,
@@ -72,6 +77,11 @@ function print_debug(g: Graph) {
 
 let g = get_graph(argv)
 print_debug(g)
-let dot = get_dot(g, argv)
+if(argv.mermaid){
+    const mermaid = get_mermaid(g, argv)
+    console.log(mermaid)
+}else{
+    const dot = get_dot(g, argv)
+    console.log(dot)
+}
 
-console.log(dot)

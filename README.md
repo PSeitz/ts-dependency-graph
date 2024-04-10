@@ -17,6 +17,7 @@ Supports tsconfig path mappings since v1.4.3.
 Options:
   --help                          Show help                            [boolean]
   --version                       Show version number                  [boolean]
+  --mermaid                       use mermaid markdown as output.      [boolean]
   --color_edges                   use a random color to color the edges, group
                                   by node.             [boolean] [default: true]
   --start                         the starting file, for the analysis. can also
