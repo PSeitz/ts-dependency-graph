@@ -173,13 +173,18 @@ ${folder_subgraphs}
 
     to_mermaid(root_node?: string, graph_folder?: boolean) {
         const tab = '   '
+        function escapeMermaid(str: string) {
+            const escapeChars = '___'
+            return str.replace(/\[|\]/g, escapeChars) // escape brackets: []
+        }
+
         function add_edges_to_dot(edges: IEdge[], directed: boolean, color_edges: boolean) {
             if (edges.length !== 0) {
                 const dirChar = directed ? '' : '<'
                 const edges_str = edges
                     .map((e) => {
-                        const name1 = pathToName(e.node1.path)
-                        const name2 = pathToName(e.node2.path)
+                        const name1 = escapeMermaid(pathToName(e.node1.path))
+                        const name2 = escapeMermaid(pathToName(e.node2.path))
                         return `${name1} ${dirChar}--> ${name2}`
                     })
                     .join(`\n${tab}${tab}${tab}`)
