@@ -15,10 +15,10 @@ describe('graph', function () {
             graph_folder: false,
         }
         const g = get_graph(options)
-        let dot = get_mermaid(g, options)
+        let mermaid = get_mermaid(g, options)
 
-        expect(dot).not.toContain('midleaf') // won't contain, since it takes only the shortest path
-        expect(dot).toContain('leaf')
+        expect(mermaid).not.toContain('midleaf') // won't contain, since it takes only the shortest path
+        expect(mermaid).toContain('leaf')
     })
     it('base_path', async function () {
         const options: GraphOptions = {
@@ -26,8 +26,8 @@ describe('graph', function () {
             base_path: 'test_project',
             graph_folder: false,
         }
-        let dot = get_mermaid(get_graph(options), options)
-        expect(dot).not.toContain('test_project')
+        let mermaid = get_mermaid(get_graph(options), options)
+        expect(mermaid).not.toContain('test_project')
     })
     it('aggregate_by_folder', async function () {
         const options: GraphOptions = {
@@ -36,9 +36,9 @@ describe('graph', function () {
             graph_folder: false,
         }
         const g = get_graph(options)
-        let dot = get_mermaid(g, options)
+        let mermaid = get_mermaid(g, options)
 
-        expect(dot).toContain('test_project --> test_project/leafs')
+        expect(mermaid).toContain('test_project --> test_project/leafs')
     })
     it('max_depth', async function () {
         const options1: GraphOptions = {
@@ -53,11 +53,11 @@ describe('graph', function () {
             max_depth: 2,
             graph_folder: false,
         }
-        let dot_depth_1 = get_mermaid(get_graph(options1), options1)
-        let dot_depth_2 = get_mermaid(get_graph(options2), options2)
+        let mermaid_depth_1 = get_mermaid(get_graph(options1), options1)
+        let mermaid_depth_2 = get_mermaid(get_graph(options2), options2)
 
-        expect(dot_depth_1).not.toContain('mid --> leaf')
-        expect(dot_depth_2).toContain('mid --> leaf')
+        expect(mermaid_depth_1).not.toContain('mid --> leaf')
+        expect(mermaid_depth_2).toContain('mid --> leaf')
     })
     it('filter_edge verbose', async function () {
         const options1: GraphOptions = {
@@ -67,33 +67,33 @@ describe('graph', function () {
             verbose: true,
             graph_folder: false,
         }
-        let dot_depth_1 = get_mermaid(get_graph(options1), options1)
+        let mermaid_depth_1 = get_mermaid(get_graph(options1), options1)
 
-        expect(dot_depth_1).not.toContain('"test_project/mid.ts" -> "test_project/leafs/leaf.ts"')
+        expect(mermaid_depth_1).not.toContain('"test_project/mid.ts" -> "test_project/leafs/leaf.ts"')
     })
     it('start at folder level should contain all files', async function () {
         const options: GraphOptions = {
             start: 'test_project',
             graph_folder: false,
         }
-        let dot = get_mermaid(get_graph(options), options)
+        let mermaid = get_mermaid(get_graph(options), options)
 
-        expect(dot).toContain('leaf.ts')
-        expect(dot).toContain('start.ts')
-        expect(dot).toContain('secondmidleaf.ts')
-        expect(dot).toContain('mid.ts')
+        expect(mermaid).toContain('leaf.ts')
+        expect(mermaid).toContain('start.ts')
+        expect(mermaid).toContain('secondmidleaf.ts')
+        expect(mermaid).toContain('mid.ts')
     })
     it('start at folder level with glob, should contain all files', async function () {
         const options: GraphOptions = {
             start: 'test_project/**/*.ts',
             graph_folder: false,
         }
-        let dot = get_mermaid(get_graph(options), options)
+        let mermaid = get_mermaid(get_graph(options), options)
 
-        expect(dot).toContain('leaf.ts')
-        expect(dot).toContain('start.ts')
-        expect(dot).toContain('secondmidleaf.ts')
-        expect(dot).toContain('mid.ts')
+        expect(mermaid).toContain('leaf.ts')
+        expect(mermaid).toContain('start.ts')
+        expect(mermaid).toContain('secondmidleaf.ts')
+        expect(mermaid).toContain('mid.ts')
     })
     it('start at folder level with glob, should have start_files', async function () {
         const options: GraphOptions = {
@@ -114,21 +114,21 @@ describe('graph', function () {
             filter: ['start'],
             graph_folder: false,
         }
-        let dot = get_mermaid(get_graph(options), options)
+        let mermaid = get_mermaid(get_graph(options), options)
 
-        expect(dot).toContain('leaf.ts')
-        expect(dot).not.toContain('start.ts')
-        expect(dot).not.toContain('secondmidleaf.ts') // is only reachable via start.ts
-        expect(dot).toContain('mid.ts')
+        expect(mermaid).toContain('leaf.ts')
+        expect(mermaid).not.toContain('start.ts')
+        expect(mermaid).not.toContain('secondmidleaf.ts') // is only reachable via start.ts
+        expect(mermaid).toContain('mid.ts')
     })
     it('should import .js as .ts', async function () {
         const options: GraphOptions = {
             start: 'test_project/importasjs.ts',
             graph_folder: false,
         }
-        let dot = get_mermaid(get_graph(options), options)
+        let mermaid = get_mermaid(get_graph(options), options)
 
-        expect(dot).toContain('leaf.ts')
+        expect(mermaid).toContain('leaf.ts')
     })
 
     it('should put sub_cluster with folder name with graph_folder option', async function () {
@@ -136,14 +136,14 @@ describe('graph', function () {
             start: 'test_project',
             graph_folder: true,
         }
-        let dot = get_mermaid(get_graph(options), options)
+        let mermaid = get_mermaid(get_graph(options), options)
 
         // each folder own cluster
-        expect(dot).toContain('subgraph cluster_1')
-        expect(dot).toContain('subgraph cluster_2')
+        expect(mermaid).toContain('subgraph cluster_1')
+        expect(mermaid).toContain('subgraph cluster_2')
         // folder names
-        expect(dot).toContain('test_project')
-        expect(dot).toContain('leafs')
+        expect(mermaid).toContain('test_project')
+        expect(mermaid).toContain('leafs')
     })
 
     it('should handle compilerOptions paths', async function () {
