@@ -24,6 +24,11 @@ function pathToName(path: string) {
     return name;
 }
 
+function escapeMermaid(str: string) {
+    const escapeChars = '___'
+    return str.replace(/\[|\]/g, escapeChars) // escape brackets: "[", "]"
+}
+
 export function getRandomColor() {
     var letters = '0123456789ABCDEF'
     var color = '#'
@@ -173,11 +178,7 @@ ${folder_subgraphs}
 
     to_mermaid(root_node?: string, graph_folder?: boolean) {
         const tab = '   '
-        function escapeMermaid(str: string) {
-            const escapeChars = '___'
-            return str.replace(/\[|\]/g, escapeChars) // escape brackets: []
-        }
-
+        
         function add_edges_to_dot(edges: IEdge[], directed: boolean, color_edges: boolean) {
             if (edges.length !== 0) {
                 const dirChar = directed ? '' : '<'
@@ -206,8 +207,8 @@ ${folder_subgraphs}
         
         const nodes = this.nodes
             .map((n) => {
-                const path = n.path
-                const name = pathToName(path)
+                const path = escapeMermaid(n.path)
+                const name = escapeMermaid(pathToName(path))
                 return `${name}[${path}]`
             })
             .join(`\n${tab}`)
@@ -280,8 +281,9 @@ function tree_to_subgraph_mermaid(tree: IPathTree, number: { cluster_number: num
             let current_number = number.cluster_number
             number.cluster_number = number.cluster_number + 1
             let sub_cluster = tree_to_subgraph_mermaid(folder, number, intendation+selfIntend)
-pathToName
-            return `${intendation}subgraph cluster_${current_number} ${folder_name}\n${files}${sub_cluster}${intendation}end\n`
+            const folder_name_escaped = escapeMermaid(folder_name)
+            const files_escaped = escapeMermaid(files)
+            return `${intendation}subgraph cluster_${current_number} ${folder_name_escaped}\n${files_escaped}${sub_cluster}${intendation}end\n`
         })
         .join('\n')
 }
