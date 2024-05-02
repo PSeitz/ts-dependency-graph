@@ -15,13 +15,14 @@ export interface INode {
 }
 
 function pathToName(path: string) {
-    const pathToNameRegex = /([^\/\\]+)(?=\.\w+$)/;
-    let nameMatch: RegExpMatchArray | null = path.match(pathToNameRegex);
-    let name = nameMatch ? nameMatch[0] : path;
-    if(name =='graph') {// escape reserved word(for mermaid)
-        name = 'graph_xx';
+    const pathToNameRegex = /([^\/\\]+)(?=\.\w+$)/
+    let nameMatch: RegExpMatchArray | null = path.match(pathToNameRegex)
+    let name = nameMatch ? nameMatch[0] : path
+    if (name == 'graph') {
+        // escape reserved word(for mermaid)
+        name = 'graph_xx'
     }
-    return name;
+    return name
 }
 
 function escapeMermaid(str: string) {
@@ -189,12 +190,12 @@ ${folder_subgraphs}
                         return `${name1} ${dirChar}--> ${name2}`
                     })
                     .join(`\n${tab}${tab}${tab}`)
-                
+
                 return `${tab}class app myClass${relcnt++}\n${tab}${tab}${tab}${edges_str}\n`
             }
             return ''
         }
-        
+
         let relcnt = 1
         let paths = this.nodes.map((n) => n.path.split('/'))
         paths.sort()
@@ -204,7 +205,7 @@ ${folder_subgraphs}
             let tree = get_folder_as_tree(this.nodes)
             folder_subgraphs = tree_to_subgraph_mermaid(tree, { cluster_number: 1 }, tab)
         }
-        
+
         const nodes = this.nodes
             .map((n) => {
                 const path = escapeMermaid(n.path)
@@ -271,16 +272,22 @@ function tree_to_subgraph(tree: IPathTree, number: { cluster_number: number }, i
         })
         .join('\n')
 }
-function tree_to_subgraph_mermaid(tree: IPathTree, number: { cluster_number: number }, intendation: string = '  '): string {
+function tree_to_subgraph_mermaid(
+    tree: IPathTree,
+    number: { cluster_number: number },
+    intendation: string = '  '
+): string {
     const selfIntend = intendation
     return Object.keys(tree.sub_folders)
         .map((folder_name) => {
             let folder = tree.sub_folders[folder_name]
-            let files = folder.files_in_folder.map((file) => `${intendation}${selfIntend}${pathToName(file)}\n`).join('')
+            let files = folder.files_in_folder
+                .map((file) => `${intendation}${selfIntend}${pathToName(file)}\n`)
+                .join('')
 
             let current_number = number.cluster_number
             number.cluster_number = number.cluster_number + 1
-            let sub_cluster = tree_to_subgraph_mermaid(folder, number, intendation+selfIntend)
+            let sub_cluster = tree_to_subgraph_mermaid(folder, number, intendation + selfIntend)
             const folder_name_escaped = escapeMermaid(folder_name)
             const files_escaped = escapeMermaid(files)
             return `${intendation}subgraph cluster_${current_number} ${folder_name_escaped}\n${files_escaped}${sub_cluster}${intendation}end\n`
