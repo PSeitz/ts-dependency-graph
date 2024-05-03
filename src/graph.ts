@@ -26,7 +26,7 @@ function pathToName(path: string) {
 }
 
 function escapeMermaid(str: string) {
-    const escapeChars = '___'
+    const escapeChars = '_'
     return str.replace(/\[|\]/g, escapeChars) // escape brackets: "[", "]"
 }
 

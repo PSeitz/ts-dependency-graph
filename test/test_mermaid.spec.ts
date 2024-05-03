@@ -196,6 +196,6 @@ describe('graph', function () {
         let mermaid = get_mermaid(get_graph(options), options)
 
         expect(mermaid).not.toContain('[uuid]')
-        expect(mermaid).toContain('___uuid___')
+        expect(mermaid).toContain('_uuid_')
     })
 })
