@@ -182,7 +182,7 @@ describe('graph', function () {
                 { path: 'test_project/src/components/Input.tsx', layer: 1000 },
                 { path: 'test_project/src/[uuid]/[uuid].tsx', layer: 1000 },
                 { path: 'test_project/src/helpers/index.ts', layer: 1000 },
-                { path: 'test_project/src/helpers/helper.ts', layer: 1000 },  
+                { path: 'test_project/src/helpers/helper.ts', layer: 1000 },
             ],
             start_nodes: new Set().add({ layer: 1000, path: 'test_project/src/App.tsx' }),
             color_edges: false,

@@ -179,7 +179,7 @@ ${folder_subgraphs}
 
     to_mermaid(root_node?: string, graph_folder?: boolean) {
         const tab = '   '
-        
+
         function add_edges_to_dot(edges: IEdge[], directed: boolean, color_edges: boolean) {
             if (edges.length !== 0) {
                 const dirChar = directed ? '' : '<'

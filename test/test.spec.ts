@@ -172,7 +172,7 @@ describe('graph', function () {
                 {
                     node1: { path: 'test_project/src/App.tsx', layer: 1000 },
                     node2: { path: 'test_project/src/components/Input.tsx', layer: 1000 },
-                }, 
+                },
                 {
                     node1: { path: 'test_project/src/App.tsx', layer: 1000 },
                     node2: { path: 'test_project/src/[uuid]/[uuid].tsx', layer: 1000 },
